@@ -308,6 +308,98 @@ elif menu == "👗 Fashion High-Ticket":
                                          values=[35, 20, 15, 10, 20], hole=.4)])
         fig_share.update_layout(template='plotly_dark')
         st.plotly_chart(fig_share)
+        elif menu == "🌍 Soberania & Reservas":
+    st.title("🌍 Soberania & Reservas: O Poder das Nações")
+    st.markdown("<div class='card-quantum'>Monitoramento de ativos estratégicos e reservas de segurança nacional.</div>", unsafe_allow_html=True)
+
+    # 1. ATIVOS ESTRATÉGICOS
+    ativos_soberania = {
+        "Ouro (Reserva Global)": "GC=F",
+        "Prata (Metal Industrial)": "SI=F",
+        "Nióbio (Via Vale - Proxy)": "VALE3.SA",
+        "Petróleo Brent (Energia)": "BZ=F",
+        "Urânio (Energia Nuclear)": "URA",
+        "Cobre (Transição Energética)": "HG=F"
+    }
+
+    selecao_s = st.selectbox("Selecione o Ativo de Estado:", list(ativos_soberania.keys()))
+    ticker_s = ativos_soberania[selecao_s]
+
+    # 2. GRÁFICO DE CORRETORA (CANDLESTICK)
+    try:
+        df_s = yf.download(ticker_s, period="60d", interval="1d", progress=False)
+        if not df_s.empty:
+            df_s.columns = [col[0] if isinstance(col, tuple) else col for col in df_s.columns]
+            df_s = df_s.dropna()
+
+            fig_s = go.Figure(data=[go.Candlestick(
+                x=df_s.index,
+                open=df_s['Open'],
+                high=df_s['High'],
+                low=df_s['Low'],
+                close=df_s['Close'],
+                increasing_line_color='#d4af37', # Dourado para alta
+                decreasing_line_color='#ff4b4b'  # Vermelho para queda
+            )])
+            
+            fig_s.update_layout(
+                title=f"Monitoramento de Soberania: {selecao_s}",
+                template='plotly_dark',
+                xaxis_rangeslider_visible=False,
+                height=500,
+                paper_bgcolor='black', plot_bgcolor='black'
+            )
+            st.plotly_chart(fig_s, use_container_width=True)
+
+            # MÉTRICAS DE VALOR ESTRATÉGICO
+            v_atual = float(df_s['Close'].iloc[-1])
+            v_ontem = float(df_s['Close'].iloc[-2])
+            variacao = ((v_atual - v_ontem) / v_ontem) * 100
+            st.metric("PREÇO DE MERCADO", f"$ {v_atual:.2f}", f"{variacao:.2f}%")
+    except:
+        st.warning("Sincronizando com o Banco Mundial e bolsas de commodities...")
+
+    # 3. GRÁFICOS DE PIZZA (QUEM DETÉM O PODER)
+    st.markdown("---")
+    st.subheader("📊 Distribuição de Reservas Mundiais (%)")
+    col_r1, col_r2 = st.columns(2)
+
+    with col_r1:
+        # Dinâmica para Nióbio ou Ouro
+        if "Nióbio" in selecao_s:
+            labels_p = ['Brasil', 'Canadá', 'Austrália', 'Outros']
+            values_p = [92, 7, 0.5, 0.5]
+            st.write("**Reservas de Nióbio**")
+        elif "Ouro" in selecao_s:
+            labels_p = ['EUA', 'Alemanha', 'FMI', 'Itália', 'França', 'Rússia', 'China']
+            values_p = [25, 10, 8, 7, 7, 6, 5]
+            st.write("**Reservas de Ouro (Bancos Centrais)**")
+        else:
+            labels_p = ['China', 'EUA', 'Brasil', 'Rússia', 'Outros']
+            values_p = [35, 20, 15, 10, 20]
+            st.write("**Reservas Estratégicas Gerais**")
+
+        fig_res = go.Figure(data=[go.Pie(labels=labels_p, values=values_p, hole=.4)])
+        fig_res.update_layout(template='plotly_dark')
+        st.plotly_chart(fig_res)
+
+    with col_r2:
+        st.info("💡 **Destaque Geopolítico:**")
+        if "Nióbio" in selecao_s:
+            st.write("O Brasil possui o monopólio prático do Nióbio. É o material essencial para turbinas de aviões e foguetes. Sem o Brasil, a indústria aeroespacial para.")
+        elif "Ouro" in selecao_s:
+            st.write("Bancos Centrais compraram níveis recordes de Ouro em 2024 e 2025 para reduzir a dependência do Dólar.")
+        else:
+            st.write("A transição energética depende de Cobre e Lítio. A China hoje domina 60% do processamento desses materiais.")
+
+    # 4. TABELA DE SOBERANIA NACIONAL
+    st.markdown("---")
+    st.subheader("🇧🇷 Brasil: Potencial de Exportação Estratégica")
+    st.table({
+        "Material": ["Nióbio", "Minério de Ferro", "Petróleo", "Soja", "Lítio"],
+        "Posição Mundial": ["1º", "2º", "9º", "1º", "5º"],
+        "Status": ["Domínio Total", "Liderança de Mercado", "Expansão OPEP+", "Celeiro do Mundo", "Nova Fronteira"]
+    })
 
 elif menu == "🙏 Devocional de Poder":
     st.title("🙏 Conexão com o Alto")
