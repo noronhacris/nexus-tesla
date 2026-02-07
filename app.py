@@ -224,6 +224,90 @@ elif menu == "💹 Trade & Commodities":
         st.info("🚀 **Nióbio & Grafeno:** Materiais críticos para a indústria aeroespacial e baterias de ultra-rápida carga.")
     with col2:
         st.success("📈 **Prata & Cobre:** Demanda crescente devido à transição energética (Painéis Solares e Carros Elétricos).")
+        # --- INSERIR LOGO ABAIXO DO MÓDULO TRADE & COMMODITIES ---
+
+elif menu == "👗 Fashion High-Ticket":
+    st.title("👗 Fashion High-Ticket: Bolsa de Valores da Moda")
+    st.markdown("<div class='card-quantum'>Monitoramento das 20 potências do Luxo Global e Nacional.</div>", unsafe_allow_html=True)
+
+    # 1. DICIONÁRIO DE ATIVOS FASHION
+    marcas_moda = {
+        "GLOBAL: LVMH (Louis Vuitton)": "MC.PA",
+        "GLOBAL: Hermès": "RMS.PA",
+        "GLOBAL: Kering (Gucci)": "KER.PA",
+        "GLOBAL: Prada": "1913.HK",
+        "GLOBAL: Nike": "NKE",
+        "GLOBAL: Ralph Lauren": "RL",
+        "GLOBAL: Moncler": "MONC.MI",
+        "GLOBAL: Burberry": "BRBY.L",
+        "GLOBAL: Capri (Versace)": "CPRI",
+        "GLOBAL: Tapestry (Coach)": "TPR",
+        "BRASIL: Arezzo&Co": "ARZZ3.SA",
+        "BRASIL: Grupo Soma (Farm)": "SOMA3.SA",
+        "BRASIL: Track&Field": "TFCO4.SA",
+        "BRASIL: Vivara": "VIVA3.SA",
+        "BRASIL: Lojas Renner": "LREN3.SA",
+        "BRASIL: Alpargatas": "ALPA4.SA",
+        "BRASIL: Guararapes": "GUAR3.SA",
+        "BRASIL: Vulcabras": "VULC3.SA",
+        "BRASIL: Grendene": "GRND3.SA",
+        "BRASIL: Hering (Soma)": "SOMA3.SA"
+    }
+
+    selecao_moda = st.selectbox("Escolha a Marca para Análise:", list(marcas_moda.keys()))
+    ticker_moda = marcas_moda[selecao_moda]
+
+    # 2. GRÁFICO DE CORRETORA (CANDLESTICK)
+    try:
+        df_moda = yf.download(ticker_moda, period="60d", interval="1d", progress=False)
+        if not df_moda.empty:
+            df_moda.columns = [col[0] if isinstance(col, tuple) else col for col in df_moda.columns]
+            df_moda = df_moda.dropna()
+
+            fig_moda = go.Figure(data=[go.Candlestick(
+                x=df_moda.index,
+                open=df_moda['Open'],
+                high=df_moda['High'],
+                low=df_moda['Low'],
+                close=df_moda['Close'],
+                increasing_line_color='#00FF00', # Verde
+                decreasing_line_color='#FF0000'  # Vermelho
+            )])
+            
+            fig_moda.update_layout(
+                title=f"Terminal High-Ticket: {selecao_moda}",
+                template='plotly_dark',
+                xaxis_rangeslider_visible=False,
+                height=500,
+                paper_bgcolor='black', plot_bgcolor='black'
+            )
+            st.plotly_chart(fig_moda, use_container_width=True)
+
+            # MÉTRICAS
+            v_atual = float(df_moda['Close'].iloc[-1])
+            v_abertura = float(df_moda['Open'].iloc[-1])
+            delta_p = ((v_atual - v_abertura) / v_abertura) * 100
+            st.metric("VALOR DA AÇÃO", f" {v_atual:.2f}", f"{delta_p:.2f}%")
+    except:
+        st.warning("Buscando dados na Bolsa de Paris/Milão/NY/B3...")
+
+    # 3. GRÁFICOS DE PIZZA (MARKET SHARE)
+    st.markdown("---")
+    col_p1, col_p2 = st.columns(2)
+
+    with col_p1:
+        st.subheader("Dominância por Gênero")
+        fig_gen = go.Figure(data=[go.Pie(labels=['Feminino', 'Masculino', 'Unissex'], 
+                                       values=[55, 35, 10], hole=.4)])
+        fig_gen.update_layout(template='plotly_dark')
+        st.plotly_chart(fig_gen)
+
+    with col_p2:
+        st.subheader("Market Share Global Luxo")
+        fig_share = go.Figure(data=[go.Pie(labels=['LVMH', 'Hermès', 'Kering', 'Chanel', 'Outros'], 
+                                         values=[35, 20, 15, 10, 20], hole=.4)])
+        fig_share.update_layout(template='plotly_dark')
+        st.plotly_chart(fig_share)
 
 elif menu == "🙏 Devocional de Poder":
     st.title("🙏 Conexão com o Alto")
