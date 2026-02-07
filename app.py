@@ -180,34 +180,36 @@ def render_corretora_chart(ticker, nome):
 def logic_astrolabio_tesla(max_n, qtd, modalidade):
     """
     Algoritmo baseado na Matemática de Vórtice de Nikola Tesla.
-    Foca nas confluências de 3, 6 e 9 para filtragem de probabilidade.
+    CORREÇÃO: Garante que o pool de números seja sempre maior que a quantidade sorteada.
     """
     with st.status("🌀 SINCRO-VÓRTICE ATIVO: ANALISANDO FREQUÊNCIAS...", expanded=True) as status:
-        time.sleep(2.5)
-        # Semente baseada em nanossegundos para evitar repetição
+        time.sleep(1.5)
         random.seed(int(time.time() * 1000))
         
-        # Filtro de Vórtice 3-6-9
-        vortex_base = [n for n in range(1, max_n + 1) if (n % 3 == 0 or n % 6 == 0 or n % 9 == 0)]
+        # 1. População total disponível para o jogo
+        populacao_total = list(range(1, max_n + 1))
         
-        # Expansão de pool com semente aleatória de alta entropia
-        full_pool = list(set(vortex_base + random.sample(range(1, max_n + 1), int(max_n * 0.4))))
+        # 2. Filtro de Vórtice 3-6-9 (Números de Tesla)
+        vortex_base = [n for n in populacao_total if (n % 3 == 0 or n % 6 == 0 or n % 9 == 0)]
         
-        # Sorteio Final
+        # 3. SEGURANÇA: Se o jogo pede mais números do que o filtro Tesla possui (ex: Lotomania)
+        # nós completamos o 'balde' com o restante dos números para não dar erro.
+        if qtd > len(vortex_base):
+            restante = list(set(populacao_total) - set(vortex_base))
+            full_pool = vortex_base + restante
+        else:
+            full_pool = vortex_base
+        
+        # 4. Sorteio Final da amostra solicitada
         selecionados = sorted(random.sample(full_pool, qtd))
         
         if modalidade == "Milionária":
-            # Geração dos 2 Trevos da Sorte (Específico desta modalidade)
             trevos = sorted(random.sample(range(1, 7), 2))
             status.update(label="VÓRTICE ESTABILIZADO: TREVOS IDENTIFICADOS!", state="complete")
             return selecionados, trevos
         
         status.update(label="CONFLUÊNCIA ESTABELECIDA COM SUCESSO!", state="complete")
         return selecionados, None
-
-# =================================================================
-# 4. SIDEBAR - PAINEL DE COMANDO CENTRAL (NAVEGAÇÃO)
-# =================================================================
 with st.sidebar:
     st.markdown("<h1 style='text-align: center;'>⚡ NEXUS ELITE</h1>", unsafe_allow_html=True)
     st.markdown("<p style='text-align: center; color: #d4af37;'>SISTEMA DE ESTADO v4.1</p>", unsafe_allow_html=True)
