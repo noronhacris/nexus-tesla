@@ -46,15 +46,25 @@ with tab2:
         if res == 9: st.warning("ALERTA: Confluência Ponto Zero Detectada!")
 
 with tab3:
-    st.header("Monitoramento Cripto em Tempo Real")
+    st.header("Monitoramento de Vórtice Cripto")
     moeda = st.selectbox("Escolha a Moeda:", ["BTC-USD", "ETH-USD", "SOL-USD"])
-    
-    # Gráfico em Tempo Real
     data = yf.download(moeda, period="7d", interval="1h")
-    fig = go.Figure(data=[go.Candlestick(x=data.index, open=data['Open'], high=data['High'], low=data['Low'], close=data['Close'],
-                    increasing_line_color='#d4af37', decreasing_line_color='#444')])
-    fig.update_layout(template='plotly_dark', paper_bgcolor='black', plot_bgcolor='black')
+    
+    # Cálculo da Linha de Equilíbrio Tesla (Média de 9 períodos)
+    data['Tesla_9'] = data['Close'].rolling(window=9).mean()
+    
+    fig = go.Figure()
+    # Velas de Preço
+    fig.add_trace(go.Candlestick(x=data.index, open=data['Open'], high=data['High'], 
+                                 low=data['Low'], close=data['Close'], name='Mercado'))
+    # Linha de Vórtice (Dourada)
+    fig.add_trace(go.Scatter(x=data.index, y=data['Tesla_9'], name='Frequência 9',
+                             line=dict(color='#d4af37', width=2)))
+    
+    fig.update_layout(template='plotly_dark', paper_bgcolor='black', plot_bgcolor='black', height=600)
     st.plotly_chart(fig, use_container_width=True)
+    
+    st.write("💡 **Dica do Operador:** Quando o preço toca a linha dourada (Frequência 9), o mercado busca o equilíbrio do Ponto Zero.")
 
 with tab4:
     st.header("E-commerce & Renda Extra (Pet)")
