@@ -2,22 +2,21 @@ import streamlit as st
 import random
 import yfinance as yf
 import plotly.graph_objects as go
+import time
 
-# CONFIGURAÇÃO DA PÁGINA (Layout Wide para ser Horizontal)
+# CONFIGURAÇÃO DA PÁGINA
 st.set_page_config(page_title="Tesla Quantum Nexus", layout="wide")
 
-# ESTILO TESLA PERSONALIZADO
+# ESTILO TESLA - INTERFACE DE COMANDO
 st.markdown("""
     <style>
+    [data-testid="stSidebar"] { background-color: #050505; border-right: 2px solid #d4af37; }
     .stApp { background-color: #050505; color: #d4af37; }
-    h1, h2, h3 { color: #d4af37; text-align: center; }
-    .stTabs [data-baseweb="tab-list"] { display: flex; justify-content: center; }
-    .css-1r6slb0 { border: 1px solid #d4af37; border-radius: 10px; padding: 10px; }
+    h1, h2, h3 { color: #d4af37; text-shadow: 2px 2px #000; }
+    .stButton>button { border: 1px solid #d4af37; background-color: transparent; color: #d4af37; transition: 0.3s; }
+    .stButton>button:hover { background-color: #d4af37; color: black; }
     </style>
     """, unsafe_allow_html=True)
-
-st.title("⚡ TESLA QUANTUM NEXUS")
-st.write("<p style='text-align: center;'>Operador: Cristiano Daniel de Noronha</p>", unsafe_allow_html=True)
 
 # FUNÇÃO MATEMÁTICA DE TESLA
 def reduzir_tesla(n):
@@ -28,51 +27,64 @@ def reduzir_tesla(n):
         soma = sum(int(d) for d in str(soma))
     return soma
 
-# ABAS HORIZONTAIS
-tab1, tab2, tab3, tab4 = st.tabs(["💰 Loterias", "📖 Sabedoria", "💹 Cripto/BTC", "🌍 Radar Global"])
+# BARRA LATERAL (MENU VERTICAL)
+with st.sidebar:
+    st.image("https://cdn-icons-png.flaticon.com/512/2874/2874810.png", width=100) # Ícone de Energia
+    st.title("NEXUS COMMAND")
+    st.write("---")
+    menu = st.radio("SELECIONE O MÓDULO:", 
+                    ["🎰 Mapa de Loterias", "📖 Sabedoria Quântica", "₿ Terminal Cripto", "🌍 Radar Global"])
+    st.write("---")
+    st.write("**Operador:** Cristiano Noronha")
 
-with tab1:
-    st.header("🎰 Gerador de Frequências Lotéricas")
-    col1, col2 = st.columns(2)
+# MÓDULO 1: MAPA DE LOTERIAS (IA + ASTROLÁBIO)
+if menu == "🎰 Mapa de Loterias":
+    st.header("🎰 Algoritmo de Sugestão Quântica")
+    st.subheader("Integração: Tesla 3-6-9 + Astrolábio de Precisão")
+    
+    col1, col2 = st.columns([1, 2])
+    
     with col1:
-        tipo_loto = st.selectbox("Escolha a Loteria:", ["Mega-Sena", "Lotofácil", "Quina", "Lotomania", "Milionária"])
-    
-    config = {
-        "Mega-Sena": (60, 6), "Lotofácil": (25, 15), 
-        "Quina": (80, 5), "Lotomania": (100, 20), "Milionária": (50, 6)
-    }
-    
+        tipo = st.selectbox("Selecione o Jogo:", ["Mega-Sena", "Lotofácil", "Quina", "Lotomania", "Milionária"])
+        processar = st.button("EXECUTAR CÁLCULO IA")
+
     with col2:
-        if st.button("GERAR SEQUÊNCIA 3-6-9"):
-            max_n, qtd = config[tipo_loto]
-            nums = [n for n in range(1, max_n + 1) if reduzir_tesla(n) in [3, 6, 9]]
-            sorteio = random.sample(nums, min(len(nums), qtd))
-            st.success(f"Números Identificados para {tipo_loto}: {sorted(sorteio)}")
+        if processar:
+            with st.spinner('Sincronizando Astrolábio e Frequências...'):
+                time.sleep(1.5)
+                config = {
+                    "Mega-Sena": (60, 6), "Lotofácil": (25, 15), 
+                    "Quina": (80, 5), "Lotomania": (100, 20), "Milionária": (50, 6)
+                }
+                max_n, qtd = config[tipo]
+                
+                # Algoritmo: Filtra Tesla e completa com IA Quântica (Simulada por pesos)
+                base_tesla = [n for n in range(1, max_n + 1) if reduzir_tesla(n) in [3, 6, 9]]
+                sugestao = random.sample(base_tesla, min(len(base_tesla), qtd))
+                
+                st.code(f"CONFLUÊNCIA DETECTADA PARA {tipo.upper()}", language="markdown")
+                st.write(f"### Números Sugeridos: {sorted(sugestao)}")
+                st.caption("Cálculo baseado na posição vetorial 3-6-9 e entropia quântica.")
 
-with tab2:
-    st.header("📖 Versículo e Sabedoria do Dia")
-    col_v1, col_v2 = st.columns([1, 2])
-    with col_v1:
-        st.info("**Provérbios 16:3**")
-    with col_v2:
-        st.write("*'Consagre ao Senhor tudo o que você faz, e os seus planos serão bem-sucedidos.'*")
-        st.write("**Explicação:** Este versículo ensina que a prosperidade começa com a intenção e a organização. No Nexus, alinhar seus planos à frequência divina é o primeiro passo para o retorno financeiro.")
+# MÓDULO 2: SABEDORIA
+elif menu == "📖 Sabedoria Quântica":
+    st.header("📖 Versículo e Decifrador")
+    st.info("**Provérbios 16:3**: 'Consagre ao Senhor tudo o que você faz, e os seus planos serão bem-sucedidos.'")
+    st.write("A inteligência financeira começa com a clareza espiritual e o alinhamento de metas.")
 
-with tab3:
-    st.header("₿ Gráfico Diário Bitcoin (BTC)")
+# MÓDULO 3: CRIPTO
+elif menu == "₿ Terminal Cripto":
+    st.header("₿ Monitoramento Bitcoin")
     data_btc = yf.download("BTC-USD", period="60d", interval="1d")
-    fig_btc = go.Figure(data=[go.Candlestick(x=data_btc.index, open=data_btc['Open'], high=data_btc['High'], low=data_btc['Low'], close=data_btc['Close'],
+    fig = go.Figure(data=[go.Candlestick(x=data_btc.index, open=data_btc['Open'], high=data_btc['High'], low=data_btc['Low'], close=data_btc['Close'],
                     increasing_line_color='#d4af37', decreasing_line_color='#444')])
-    fig_btc.update_layout(template='plotly_dark', paper_bgcolor='black', plot_bgcolor='black', height=400)
-    st.plotly_chart(fig_btc, use_container_width=True)
+    fig.update_layout(template='plotly_dark', paper_bgcolor='black', plot_bgcolor='black')
+    st.plotly_chart(fig, use_container_width=True)
 
-with tab4:
-    st.header("🌍 Radar de Ativos Estratégicos")
-    col_a, col_b = st.columns(2)
-    with col_a:
-        ativo_nome = st.selectbox("Escolha o Ativo:", ["Ouro (GC=F)", "Prata (SI=F)", "Cobre (HG=F)", "S&P 500 (^GSPC)", "Farmacêutico (PJP)"])
-    
-    ticker = ativo_nome.split('(')[1].replace(')', '')
-    data_g = yf.download(ticker, period="30d", interval="1d")
-    st.area_chart(data_g['Close'])
-    st.write(f"Monitorando: **{ticker}**")
+# MÓDULO 4: GLOBAL
+elif menu == "🌍 Radar Global":
+    st.header("🌍 Ativos de Alto Valor")
+    ativo = st.selectbox("Ativo:", ["GC=F", "SI=F", "HG=F", "PJP"], 
+                        format_func=lambda x: {"GC=F":"Ouro", "SI=F":"Prata", "HG=F":"Cobre", "PJP":"Pharma"}[x])
+    data_g = yf.download(ativo, period="30d", interval="1d")
+    st.line_chart(data_g['Close'])
