@@ -14,121 +14,143 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# Estilização CSS Expandida para Terminal de Elite
+# Estilização CSS Expandida para Terminal de Elite (Design Viciante)
 st.markdown("""
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700&family=JetBrains+Mono:wght@400;700&display=swap');
     
     .stApp { background-color: #000000; color: #FFFFFF; font-family: 'Inter', sans-serif; }
     
-    /* Sidebar Profissional com Gradiente de Borda */
+    /* Sidebar Profissional com Gradiente de Borda Áurea */
     [data-testid="stSidebar"] { 
         background-color: #050505; 
         border-right: 2px solid #d4af37; 
         box-shadow: 10px 0px 30px rgba(212, 175, 55, 0.1);
     }
     
-    /* Botão de Execução Tesla com Efeito de Brilho */
+    /* Botão de Execução Tesla com Efeito de Brilho e Pulso */
     .stButton>button { 
         border-radius: 12px; border: none; 
         background: linear-gradient(135deg, #d4af37 0%, #f9e295 100%); 
         color: #000 !important; font-weight: 800; text-transform: uppercase;
         width: 100%; height: 55px; transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         box-shadow: 0px 4px 15px rgba(212, 175, 55, 0.3);
+        margin-top: 15px;
     }
     .stButton>button:hover { 
         transform: scale(1.02); 
         box-shadow: 0px 8px 40px rgba(212, 175, 55, 0.6);
+        background: linear-gradient(135deg, #f9e295 0%, #d4af37 100%);
     }
     
-    /* Containers de Módulos (Cards) */
+    /* Containers de Módulos (Cards Dinâmicos) */
     .card-quantum { 
         border-radius: 25px; background: linear-gradient(145deg, #111, #050505); 
         padding: 35px; border: 1px solid #222; margin-bottom: 30px;
-        box-shadow: 10px 10px 30px rgba(0,0,0,0.5);
+        box-shadow: 15px 15px 40px rgba(0,0,0,0.7);
     }
     
-    /* Tipografia de Estado */
-    h1, h2, h3 { color: #d4af37; font-family: 'JetBrains Mono', monospace; letter-spacing: 3px; font-weight: 700; }
+    /* Tipografia de Autoridade */
+    h1, h2, h3 { 
+        color: #d4af37; 
+        font-family: 'JetBrains Mono', monospace; 
+        letter-spacing: 3px; 
+        font-weight: 700; 
+        text-transform: uppercase;
+    }
     
-    /* Mensagens Devocionais e Conselhos */
+    /* Estilização de Mensagens Neutras */
     .neutro-msg { 
-        border-left: 8px solid #d4af37; padding: 30px; 
-        background: #0a0a0a; line-height: 2.0; font-size: 1.1rem;
+        border-left: 8px solid #d4af37; padding: 35px; 
+        background: linear-gradient(to right, #0a0a0a, #000); 
+        line-height: 2.0; font-size: 1.15rem;
         border-radius: 0 25px 25px 0;
+        box-shadow: 5px 5px 20px rgba(0,0,0,0.3);
     }
 
-    /* Estilização de Métricas de Corretora */
-    [data-testid="stMetricValue"] { color: #d4af37 !important; font-size: 2.2rem !important; }
+    /* Estilização de Métricas de Alta Performance */
+    [data-testid="stMetricValue"] { 
+        color: #d4af37 !important; 
+        font-family: 'JetBrains Mono', monospace !important;
+        font-size: 2.3rem !important; 
+        font-weight: 700 !important;
+    }
+    [data-testid="stMetricDelta"] { font-size: 1.1rem !important; }
+    
+    /* Scrollbar Customizada */
+    ::-webkit-scrollbar { width: 8px; }
+    ::-webkit-scrollbar-track { background: #000; }
+    ::-webkit-scrollbar-thumb { background: #d4af37; border-radius: 10px; }
     </style>
     """, unsafe_allow_html=True)
 
 # =================================================================
-# 2. MOTORES GRÁFICOS E ALGORITMOS (NÚCLEO DE DADOS)
+# 2. MOTORES GRÁFICOS E ALGORITMOS (NÚCLEO DE INTELIGÊNCIA)
 # =================================================================
 
 def render_corretora_chart(ticker, nome):
-    """Renderiza Terminal de Candlestick e Painel de Métricas Reais"""
+    """Renderiza Terminal de Candlestick Nível Pro e Métricas Reais"""
     try:
-        # Busca de dados estendida (90 dias) para maior precisão visual
+        # Busca de dados de 90 dias para análise de médio prazo
         data = yf.download(ticker, period="90d", interval="1d", progress=False, auto_adjust=True)
         
         if data.empty:
-            st.error(f"⚠️ Falha na Sincronização de {nome}. Verifique a conexão com a Bolsa.")
+            st.error(f"⚠️ Erro de Sincronização: O sinal de {nome} não foi detectado.")
             return
 
-        # Interface do Gráfico de Velas Profissional
+        # Interface do Gráfico de Velas de Alta Precisão
         fig = go.Figure(data=[go.Candlestick(
             x=data.index, open=data['Open'], high=data['High'], low=data['Low'], close=data['Close'],
             increasing_line_color='#d4af37', decreasing_line_color='#ff4b4b',
             increasing_fillcolor='#d4af37', decreasing_fillcolor='#ff4b4b',
-            name="Candlestick"
+            name="Market Price"
         )])
         
         fig.update_layout(
             template='plotly_dark', paper_bgcolor='rgba(0,0,0,0)', 
-            plot_bgcolor='rgba(0,0,0,0)', height=500,
+            plot_bgcolor='rgba(0,0,0,0)', height=550,
             xaxis_rangeslider_visible=False,
-            margin=dict(l=10, r=10, t=30, b=10),
-            title=dict(text=f"TERMINAL ANALÍTICO: {nome}", font=dict(color='#d4af37', size=18))
+            margin=dict(l=10, r=10, t=50, b=10),
+            title=dict(text=f"TERMINAL ANALÍTICO: {nome.upper()}", font=dict(color='#d4af37', size=20))
         )
         st.plotly_chart(fig, use_container_width=True)
         
-        # Painel de Métricas de Alta e Baixa (Substitui os valores manuais que sumiram)
+        # Painel de Métricas de Corretora (Preços Reais)
         m1, m2, m3, m4 = st.columns(4)
         atual = data['Close'].iloc[-1]
         anterior = data['Close'].iloc[-2]
-        delta_perc = ((atual - anterior) / anterior) * 100
+        delta_p = ((atual - anterior) / anterior) * 100
         
         m1.metric("PREÇO ATUAL", f"{atual:.2f}")
-        m2.metric("VARIAÇÃO 24H", f"{delta_perc:.2f}%", delta=f"{delta_perc:.2f}%")
-        m3.metric("MÁXIMA PERÍODO", f"{data['High'].max():.2f}")
-        m4.metric("MÍNIMA PERÍODO", f"{data['Low'].min():.2f}")
+        m2.metric("VARIAÇÃO 24H", f"{delta_p:.2f}%", delta=f"{delta_p:.2f}%")
+        m3.metric("MÁXIMA (90D)", f"{data['High'].max():.2f}")
+        m4.metric("MÍNIMA (90D)", f"{data['Low'].min():.2f}")
         
     except Exception as e:
-        st.warning(f"O sinal de {nome} está oscilando no servidor. Recarregue em instantes.")
+        st.warning(f"Sinal de {nome} oscilando. Tentando reconexão...")
 
 def logic_astrolabio_tesla(max_n, qtd, modalidade):
-    """Algoritmo 3-6-9 Avançado com Tratamento de Trevos Milionária"""
-    with st.status("🌀 Sincronizando Vórtice Tesla...", expanded=True) as status:
-        time.sleep(2)
-        # Lógica de Vórtice Matemático 3-6-9
+    """Algoritmo Tesla 3-6-9 com Geração Especial de Trevos"""
+    with st.status("🌀 Sincronizando Astrolábio Quântico...", expanded=True) as status:
+        time.sleep(2.5)
+        # Semente baseada em pulso temporal para entropia máxima
+        random.seed(int(time.time() * 1000))
+        
+        # Lógica de Vórtice 3-6-9
         vortex = [n for n in range(1, max_n + 1) if (n % 3 == 0 or n % 6 == 0 or n % 9 == 0)]
-        pool = list(set(vortex + random.sample(range(1, max_n + 1), int(max_n * 0.4))))
+        pool = list(set(vortex + random.sample(range(1, max_n + 1), int(max_n * 0.45))))
         
         principais = sorted(random.sample(pool, qtd))
         
         if modalidade == "Milionária":
-            # Geração dos 2 Trevos da Sorte (Específico Milionária)
+            # Trevos da Sorte específicos para a Milionária (1 a 6)
             trevos = sorted(random.sample(range(1, 7), 2))
-            status.update(label="Vórtice Estabilizado com Trevos!", state="complete")
+            status.update(label="Vórtice Estabilizado: Trevos Identificados!", state="complete")
             return principais, trevos
         
-        status.update(label="Frequência Identificada!", state="complete")
+        status.update(label="Frequência Harmônica Estabelecida!", state="complete")
         return principais, None
-
-# --- FIM DA PARTE 1 ---
-# =================================================================
+        # =================================================================
 # 3. SIDEBAR - COMANDO CENTRAL DO OPERADOR
 # =================================================================
 with st.sidebar:
@@ -295,6 +317,4 @@ elif menu == "🤝 Conselho de Elite":
         st.warning("💡 'A paciência é o ativo mais escasso do mercado. Opere com a calma de quem domina o tempo.'")
         st.success("🎯 Foco do Ciclo: Execução Cirúrgica e Blindagem Patrimonial.")
 
-# =================================================================
-# FIM DO CÓDIGO SUPREMO - NEXUS ELITE v4.1
 # =================================================================
