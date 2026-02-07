@@ -67,6 +67,19 @@ with tab3:
     st.write("💡 **Dica do Operador:** Quando o preço toca a linha dourada (Frequência 9), o mercado busca o equilíbrio do Ponto Zero.")
 
 with tab4:
-    st.header("E-commerce & Renda Extra (Pet)")
-    st.write("Análise de Nicho: Acessórios Inteligentes para Pets")
-    st.info("Estratégia: Focar em produtos com valor final que reduza a 3, 6 ou 9 para aumentar conversão psíquica.")
+    st.header("🌍 Radar de Riqueza Global")
+    ativo_global = st.selectbox("Monitorar Ativo de Refúgio:", ["Gold (Ouro)", "S&P 500 (EUA)", "EUR/USD"])
+    
+    dict_ativos = {"Gold (Ouro)": "GC=F", "S&P 500 (EUA)": "^GSPC", "EUR/USD": "EURUSD=X"}
+    ticker_global = dict_ativos[ativo_global]
+    
+    # Análise de Volume e Vórtice
+    data_g = yf.download(ticker_global, period="30d", interval="1d")
+    st.line_chart(data_g['Close'])
+    
+    st.subheader("💡 Estratégia de Retorno Financeiro")
+    st.write("""
+    * **Arbitragem Global:** Identificar produtos eletrônicos ou de luxo com alta demanda na Europa/EUA e revenda estratégica.
+    * **Investimento em Valor:** Utilizar a Frequência 9 para identificar fundos de índice (ETFs) em pontos de exaustão.
+    * **Escalabilidade:** Focar em produtos de consumo que resolvem dores de 'Status' e 'Segurança'.
+    """)
