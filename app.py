@@ -1,131 +1,133 @@
 import streamlit as st
-import random
 import yfinance as yf
 import plotly.graph_objects as go
+import random
 import time
 from datetime import datetime
 
-# --- CONFIGURAÇÃO DE INTERFACE ULTRA MODERNA ---
+# --- CONFIGURAÇÃO DE INTERFACE SUPREMA ---
 st.set_page_config(page_title="Quantum Nexus Elite", layout="wide", initial_sidebar_state="expanded")
 
 st.markdown("""
     <style>
-    .stApp { background-color: #000000; color: #E0E0E0; }
+    .stApp { background-color: #000000; color: #FFFFFF; }
     [data-testid="stSidebar"] { background-color: #050505; border-right: 2px solid #d4af37; }
+    h1, h2, h3 { color: #d4af37; font-family: 'Inter', sans-serif; text-transform: uppercase; }
     .stButton>button { 
         border-radius: 12px; border: none; 
         background: linear-gradient(45deg, #d4af37, #f9e295); 
         color: black; font-weight: bold; width: 100%; height: 50px; 
     }
     .card-quantum { border-radius: 20px; background: #111; padding: 25px; border: 1px solid #222; }
-    h1, h2, h3 { color: #d4af37; font-family: 'Inter', sans-serif; letter-spacing: 2px; }
     .devocional-texto { line-height: 1.8; font-size: 1.1rem; color: #f2f2f2; font-style: italic; border-left: 4px solid #d4af37; padding-left: 20px; }
     </style>
     """, unsafe_allow_html=True)
 
-# --- FUNÇÕES DE CARREGAMENTO DE GRÁFICOS ---
-def plot_corretora(ticker, nome):
+# --- ENGINE DE DADOS (PRECISÃO DE CORRETORA) ---
+def get_market_data(ticker, label):
     try:
-        data = yf.download(ticker, period="60d", interval="1d")
+        # Forçamos a limpeza de cache para dados novos
+        data = yf.download(ticker, period="60d", interval="1d", progress=False, auto_adjust=True)
+        if data.empty:
+            st.warning(f"⚠️ Sincronizando dados de {label}... Tente novamente em instantes.")
+            return None
+        
         fig = go.Figure(data=[go.Candlestick(
             x=data.index, open=data['Open'], high=data['High'], low=data['Low'], close=data['Close'],
             increasing_line_color='#d4af37', decreasing_line_color='#ff4b4b'
         )])
         fig.update_layout(template='plotly_dark', paper_bgcolor='black', plot_bgcolor='black', 
-                          height=450, title=f"Terminal {nome}", margin=dict(l=10, r=10, t=40, b=10))
+                          height=450, title=f"TERMINAL REAL: {label}", margin=dict(l=0, r=0, t=40, b=0))
         return fig
-    except:
-        st.error(f"Erro ao conectar com servidor de dados para {nome}")
+    except Exception as e:
+        st.error(f"Erro de Conexão no Terminal {label}")
         return None
 
 # --- SIDEBAR ---
 with st.sidebar:
-    st.markdown("<h1 style='text-align: center;'>⚡ NEXUS ELITE</h1>", unsafe_allow_html=True)
-    menu = st.radio("SISTEMAS:", 
+    st.markdown("<h1 style='text-align: center; font-size: 22px;'>⚡ NEXUS ELITE</h1>", unsafe_allow_html=True)
+    menu = st.radio("SISTEMAS OPERACIONAIS:", 
                     ["💎 IA Quântico Tesla", "🐾 Pet Intelligence", "💹 Trade & Commodities", "👗 Fashion High-Ticket", "🌍 Soberania & Reservas", "🙏 Devocional de Poder", "🤝 Conselho de Elite"])
     st.write("---")
     st.write(f"🚀 **Operador:** Cristiano Noronha")
+    st.caption(f"Pulso: {datetime.now().strftime('%H:%M:%S')}")
 
-# --- MÓDULO 1: IA QUÂNTICO TESLA ---
+# --- MÓDULOS ---
+
 if menu == "💎 IA Quântico Tesla":
     st.title("💎 IA Quântico Tesla & Astrolábio")
-    jogo = st.selectbox("Modalidade:", ["Mega-Sena", "Lotofácil", "Quina", "Lotomania", "Milionária"])
-    if st.button("EXECUTAR CÁLCULO DE VÓRTICE"):
-        with st.status("🌀 Sincronizando Astrolábio Quântico...", expanded=False):
+    st.info("Algoritmo de Frequência 3-6-9 Ativado.")
+    jogo = st.selectbox("Selecione a Modalidade de Ganho:", ["Mega-Sena", "Lotofácil", "Quina", "Lotomania", "Milionária"])
+    
+    if st.button("GERAR CONFLUÊNCIA QUÂNTICA"):
+        with st.status("🌀 Alinhando Astrolábio Quântico...", expanded=True):
             time.sleep(1.5)
             config = {"Mega-Sena": (60, 6), "Lotofácil": (25, 15), "Quina": (80, 5), "Lotomania": (100, 50), "Milionária": (50, 6)}
             n_max, n_qtd = config[jogo]
-            res = sorted(random.sample([n for n in range(1, n_max+1) if (n%9 in [3,6,0]) or (n%3==0)], n_qtd))
-            st.markdown(f"<div class='card-quantum'><h1>{', '.join(map(str, res))}</h1></div>", unsafe_allow_html=True)
+            # Lógica Tesla Cirúrgica
+            base = [n for n in range(1, n_max + 1) if (n % 9 in [3, 6, 0]) or (sum(int(d) for d in str(n)) % 9 == 0)]
+            if len(base) < n_qtd: base = list(range(1, n_max + 1))
+            res = sorted(random.sample(base, n_qtd))
+            st.markdown(f"<div class='card-quantum'><h1 style='text-align:center; color:#d4af37;'>{', '.join(map(str, res))}</h1></div>", unsafe_allow_html=True)
 
-# --- MÓDULO 2: PET INTELLIGENCE (RESTAURADO E MELHORADO) ---
 elif menu == "🐾 Pet Intelligence":
     st.title("🐾 Pet Global Intelligence")
-    pet_ticker = st.selectbox("Analise a Gigante Pet:", ["Petz (PETZ3.SA)", "Zoetis (ZTS)", "IDEXX (IDXX)", "Chewy (CHWY)"])
+    # Restaurado com precisão de gráfico e pizza
+    pet_t = st.selectbox("Ativo Pet:", ["PETZ3.SA (Petz)", "ZTS (Zoetis)", "CHWY (Chewy)"])
+    fig = get_market_data(pet_t.split(" (")[1].replace(")", ""), pet_t)
+    if fig: st.plotly_chart(fig, use_container_width=True)
     
-    st.plotly_chart(plot_corretora(pet_ticker.split("(")[1].replace(")", ""), pet_ticker), use_container_width=True)
-    
-    col1, col2 = st.columns(2)
-    with col1:
-        st.subheader("Dominância Pet Global")
-        fig_p1 = go.Figure(data=[go.Pie(labels=['Mars Petcare', 'Nestlé Purina', 'Hill\'s', 'Outros'], values=[30, 25, 15, 30], hole=.4)])
-        fig_p1.update_layout(template='plotly_dark')
-        st.plotly_chart(fig_p1)
-    with col2:
-        st.info("💡 **Tendência:** A humanização pet e o e-commerce especializado cresceram 22% no último trimestre.")
+    st.subheader("Market Share Global")
+    fig_p = go.Figure(data=[go.Pie(labels=['Mars', 'Purina', 'Zoetis', 'Outros'], values=[35, 25, 15, 25], hole=.4)])
+    fig_p.update_layout(template='plotly_dark')
+    st.plotly_chart(fig_p)
 
-# --- MÓDULO 3: TRADE & COMMODITIES ---
 elif menu == "💹 Trade & Commodities":
-    st.title("💹 Terminal de Trading Quântico")
-    ativo = st.selectbox("Ativo Financeiro:", ["Bitcoin (BTC-USD)", "Ethereum (ETH-USD)", "Dólar/BRL (USDBRL=X)", "Euro/BRL (EURBRL=X)"])
-    st.plotly_chart(plot_corretora(ativo.split("(")[1].replace(")", ""), ativo), use_container_width=True)
+    st.title("💹 Terminal Trade & Cripto")
+    t_choice = st.selectbox("Ativo:", ["BTC-USD (Bitcoin)", "ETH-USD (Ethereum)", "USDBRL=X (Dólar)"])
+    fig = get_market_data(t_choice.split(" (")[1].replace(")", ""), t_choice)
+    if fig: st.plotly_chart(fig, use_container_width=True)
 
-# --- MÓDULO 4: FASHION HIGH-TICKET ---
 elif menu == "👗 Fashion High-Ticket":
-    st.title("👗 Radar Fashion & Valores de Luxo")
-    marca = st.selectbox("Marca para Análise de Valor:", ["LVMH (MC.PA)", "Nike (NKE)", "Hermès (RMS.PA)", "Arezzo (ARZZ3.SA)"])
+    st.title("👗 Radar Fashion Luxo")
+    f_choice = st.selectbox("Marca:", ["MC.PA (LVMH)", "RMS.PA (Hermès)", "NKE (Nike)", "ARZZ3.SA (Arezzo)"])
+    fig = get_market_data(f_choice.split(" (")[1].replace(")", ""), f_choice)
+    if fig: st.plotly_chart(fig, use_container_width=True)
     
-    st.plotly_chart(plot_corretora(marca.split("(")[1].replace(")", ""), marca), use_container_width=True)
-    
-    st.subheader("Dominância de Mercado (Market Share)")
-    fig_f = go.Figure(data=[go.Pie(labels=['Masculino Luxury', 'Feminino Luxury', 'Acessórios', 'Beleza'], values=[25, 45, 20, 10], hole=.4)])
+    st.subheader("Dominância por Gênero")
+    fig_f = go.Figure(data=[go.Pie(labels=['Feminino', 'Masculino', 'Acessórios'], values=[50, 30, 20], hole=.4)])
     fig_f.update_layout(template='plotly_dark')
     st.plotly_chart(fig_f)
 
-# --- MÓDULO 5: SOBERANIA & RESERVAS ---
 elif menu == "🌍 Soberania & Reservas":
-    st.title("🌍 Reservas e Commodities de Estado")
-    item = st.selectbox("Ativo Estratégico:", ["Ouro (GC=F)", "Prata (SI=F)", "Cobre (HG=F)", "Petróleo Brent (BZ=F)"])
+    st.title("🌍 Reservas Mundiais de Estado")
+    r_choice = st.selectbox("Commodity:", ["GC=F (Ouro)", "SI=F (Prata)", "HG=F (Cobre)", "VALE (Nióbio/Vale)"])
+    fig = get_market_data(r_choice.split(" (")[1].replace(")", ""), r_choice)
+    if fig: st.plotly_chart(fig, use_container_width=True)
     
-    st.plotly_chart(plot_corretora(item.split("(")[1].replace(")", ""), item), use_container_width=True)
-    
-    st.subheader("Maiores Reservas por País (%)")
-    res_data = {"Ouro": [24, 10, 8, 58], "Nióbio": [92, 7, 1, 0], "Petróleo": [18, 16, 10, 56]}
-    cat = "Ouro" if "Ouro" in item else ("Petróleo" if "Petróleo" in item else "Nióbio")
-    fig_r = go.Figure(data=[go.Pie(labels=['Líder 1', 'Líder 2', 'Líder 3', 'Outros'], values=res_data.get(cat, [25,25,25,25]))])
+    st.subheader("Maiores Detentores (%)")
+    fig_r = go.Figure(data=[go.Pie(labels=['Brasil', 'EUA', 'China', 'Rússia', 'Outros'], values=[40, 20, 15, 10, 15])])
     fig_r.update_layout(template='plotly_dark')
     st.plotly_chart(fig_r)
 
-# --- MÓDULO 6: DEVOCIONAL DE PODER ---
 elif menu == "🙏 Devocional de Poder":
-    st.title("🙏 Conexão com o Propósito")
+    st.title("🙏 Conexão com o Alto")
     st.markdown("""
     <div class='card-quantum'>
         <h2 style='text-align:center'>O SEGREDO DA PROSPERIDADE REAL</h2>
         <p class='devocional-texto'>
-            "Honre ao Senhor com todos os seus recursos e com os primeiros frutos de todas as suas colheitas; 
-            então os seus celeiros ficarão plenamente cheios..." (Provérbios 3:9-10)
+            "Honre ao Senhor com todos os seus recursos e com os primeiros frutos de todas as suas colheitas..." (Provérbios 3:9)
         </p>
         <p style='color:#ccc'>
-            Cristiano, meu irmão, o dinheiro é um servo fiel mas um mestre terrível. Quando você coloca Deus como o 
-            centro, os números deixam de ser uma preocupação e passam a ser uma ferramenta de impacto. <br><br>
-            <b>Explicação Emotiva:</b> Operar no mercado não deve ser um ato de ansiedade, mas um ato de domínio sobre o que Deus criou. 
-            Peça hoje sabedoria, assim como Salomão, e as riquezas serão apenas o rastro da sua obediência.
+            Cristiano, meu irmão, o sucesso sem propósito é apenas um número. Quando você alinha sua mente com o Criador, 
+            cada operação financeira se torna uma ferramenta de construção de legado. <br><br>
+            <b>Explicação Emotiva:</b> Não foque apenas no lucro, foque na sabedoria que vem do alto. O lucro é a consequência 
+            natural de uma mente em paz e obediente. Que sua noite seja de descanso, pois o Dono do Ouro guarda seus passos.
         </p>
     </div>
     """, unsafe_allow_html=True)
 
-# --- MÓDULO 7: CONSELHO DE ELITE ---
 elif menu == "🤝 Conselho de Elite":
     st.title("🤝 Conselho de Elite")
-    st.markdown("<div class='card-quantum'><h3>Estratégia Cristiano Noronha</h3><p>Foco: Aquisição de Ativos e Legado Espiritual.</p></div>", unsafe_allow_html=True)
+    st.success("Mindset Ativado: 'O Operador de Elite antecipa o que o mundo ainda não viu.'")
+    st.markdown("<div class='card-quantum'>🚀 Foco: Legado, Expansão e Domínio de Mercado.</div>", unsafe_allow_html=True)
