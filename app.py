@@ -141,32 +141,89 @@ elif menu == "🐾 Pet Intelligence":
         st.markdown("<div style='background:#111; padding:15px; border-radius:10px; border-left:4px solid #d4af37;'><b>📊 Market Share</b><br>Saúde Animal lidera com 42% do lucro do setor.</div>", unsafe_allow_html=True)
 
 elif menu == "💹 Trade & Commodities":
-    st.title("💹 Terminal Trade & Cripto")
-    t_choice = st.selectbox("Ativo:", ["BTC-USD (Bitcoin)", "ETH-USD (Ethereum)", "USDBRL=X (Dólar)"])
-    fig = get_market_data(t_choice.split(" (")[1].replace(")", ""), t_choice)
-    if fig: st.plotly_chart(fig, use_container_width=True)
-
-elif menu == "👗 Fashion High-Ticket":
-    st.title("👗 Radar Fashion Luxo")
-    f_choice = st.selectbox("Marca:", ["MC.PA (LVMH)", "RMS.PA (Hermès)", "NKE (Nike)", "ARZZ3.SA (Arezzo)"])
-    fig = get_market_data(f_choice.split(" (")[1].replace(")", ""), f_choice)
-    if fig: st.plotly_chart(fig, use_container_width=True)
+    st.title("💹 Terminal Trade & Commodities de Estado")
     
-    st.subheader("Dominância por Gênero")
-    fig_f = go.Figure(data=[go.Pie(labels=['Feminino', 'Masculino', 'Acessórios'], values=[50, 30, 20], hole=.4)])
-    fig_f.update_layout(template='plotly_dark')
-    st.plotly_chart(fig_f)
-
-elif menu == "🌍 Soberania & Reservas":
-    st.title("🌍 Reservas Mundiais de Estado")
-    r_choice = st.selectbox("Commodity:", ["GC=F (Ouro)", "SI=F (Prata)", "HG=F (Cobre)", "VALE (Nióbio/Vale)"])
-    fig = get_market_data(r_choice.split(" (")[1].replace(")", ""), r_choice)
-    if fig: st.plotly_chart(fig, use_container_width=True)
+    # 1. LISTA DE ATIVOS (Incluindo Nióbio, Grafeno e Metais)
+    ativos_commodities = {
+        "Ouro (Reserva de Valor)": "GC=F",
+        "Prata (Industrial/Refúgio)": "SI=F",
+        "Cobre (Base Tecnológica)": "HG=F",
+        "Petróleo Brent (Energia)": "BZ=F",
+        "Nióbio (Via Vale - Proxy BR)": "VALE3.SA",
+        "Grafeno (Via Applied Graphene)": "AGM.L",
+        "Bitcoin (Ouro Digital)": "BTC-USD",
+        "Dólar (DXY Index)": "DX-Y.NYB"
+    }
     
-    st.subheader("Maiores Detentores (%)")
-    fig_r = go.Figure(data=[go.Pie(labels=['Brasil', 'EUA', 'China', 'Rússia', 'Outros'], values=[40, 20, 15, 10, 15])])
-    fig_r.update_layout(template='plotly_dark')
-    st.plotly_chart(fig_r)
+    selecao_c = st.selectbox("Selecione o Ativo Estratégico:", list(ativos_commodities.keys()))
+    ticker_c = ativos_commodities[selecao_c]
+
+    # 2. GRÁFICO DE CORRETORA (VELAS DE ALTA E BAIXA)
+    try:
+        df_c = yf.download(ticker_c, period="60d", interval="1d", progress=False)
+        
+        if not df_c.empty:
+            # Limpeza de colunas para garantir que o gráfico de velas funcione
+            df_c.columns = [col[0] if isinstance(col, tuple) else col for col in df_c.columns]
+            df_c = df_c.dropna()
+
+            fig_c = go.Figure(data=[go.Candlestick(
+                x=df_c.index,
+                open=df_c['Open'],
+                high=df_c['High'],
+                low=df_c['Low'],
+                close=df_c['Close'],
+                increasing_line_color='#00FF00', # Verde de Alta
+                decreasing_line_color='#FF0000'  # Vermelho de Baixa
+            )])
+            
+            fig_c.update_layout(
+                title=f"Terminal Pro: {selecao_c}",
+                template='plotly_dark',
+                xaxis_rangeslider_visible=False,
+                height=500,
+                paper_bgcolor='black',
+                plot_bgcolor='black'
+            )
+            st.plotly_chart(fig_c, use_container_width=True)
+            
+            # Métricas em Tempo Real
+            v_atual = float(df_c['Close'].iloc[-1])
+            v_abertura = float(df_c['Open'].iloc[-1])
+            delta_perc = ((v_atual - v_abertura) / v_abertura) * 100
+            st.metric("COTAÇÃO ATUAL", f"$ {v_atual:.2f}", f"{delta_perc:.2f}%")
+        else:
+            st.warning("⚠️ Ativo em negociação ou mercado fechado. Tente novamente.")
+    except Exception as e:
+        st.error(f"Erro na conexão com o mercado: {e}")
+
+    # 3. GRÁFICO DE PIZZA (RESERVAS GLOBAIS - SOBERANIA)
+    st.markdown("---")
+    st.subheader("🌍 Soberania: Maiores Reservas por País")
+    
+    # Lógica para mudar a pizza conforme o material selecionado
+    if "Nióbio" in selecao_c:
+        labels_p = ['Brasil', 'Canadá', 'Austrália', 'Outros']
+        values_p = [92, 7, 0.5, 0.5]
+    elif "Ouro" in selecao_c:
+        labels_p = ['EUA', 'Alemanha', 'FMI', 'Itália', 'Outros']
+        values_p = [25, 10, 8, 7, 50]
+    else:
+        labels_p = ['China', 'EUA', 'Brasil', 'Rússia', 'Outros']
+        values_p = [35, 20, 15, 10, 20]
+
+    fig_pizza_c = go.Figure(data=[go.Pie(labels=labels_p, values=values_p, hole=.4)])
+    fig_pizza_c.update_layout(template='plotly_dark', title="Distribuição de Poder/Reserva")
+    st.plotly_chart(fig_pizza_c)
+
+    # 4. PAINEL DE INFORMAÇÕES TÉCNICAS (MATERIAIS)
+    st.markdown("---")
+    st.subheader("💎 Inteligência de Materiais")
+    col1, col2 = st.columns(2)
+    with col1:
+        st.info("🚀 **Nióbio & Grafeno:** Materiais críticos para a indústria aeroespacial e baterias de ultra-rápida carga.")
+    with col2:
+        st.success("📈 **Prata & Cobre:** Demanda crescente devido à transição energética (Painéis Solares e Carros Elétricos).")
 
 elif menu == "🙏 Devocional de Poder":
     st.title("🙏 Conexão com o Alto")
