@@ -3,449 +3,105 @@ import yfinance as yf
 import plotly.graph_objects as go
 import random
 import time
-from datetime import datetime
 
-# --- CONFIGURAÇÃO DE INTERFACE SUPREMA ---
-st.set_page_config(page_title="Quantum Nexus Elite", layout="wide", initial_sidebar_state="expanded")
-
-st.markdown("""
-    <style>
-    .stApp { background-color: #000000; color: #FFFFFF; }
-    [data-testid="stSidebar"] { background-color: #050505; border-right: 2px solid #d4af37; }
-    h1, h2, h3 { color: #d4af37; font-family: 'Inter', sans-serif; text-transform: uppercase; }
-    .stButton>button { 
-        border-radius: 12px; border: none; 
-        background: linear-gradient(45deg, #d4af37, #f9e295); 
-        color: black; font-weight: bold; width: 100%; height: 50px; 
-    }
-    .card-quantum { border-radius: 20px; background: #111; padding: 25px; border: 1px solid #222; }
-    .devocional-texto { line-height: 1.8; font-size: 1.1rem; color: #f2f2f2; font-style: italic; border-left: 4px solid #d4af37; padding-left: 20px; }
-    </style>
-    """, unsafe_allow_html=True)
-
-# --- ENGINE DE DADOS (PRECISÃO DE CORRETORA) ---
-def get_market_data(ticker, label):
-    try:
-        # Forçamos a limpeza de cache para dados novos
-        data = yf.download(ticker, period="60d", interval="1d", progress=False, auto_adjust=True)
-        if data.empty:
-            st.warning(f"⚠️ Sincronizando dados de {label}... Tente novamente em instantes.")
-            return None
-        
-        fig = go.Figure(data=[go.Candlestick(
-            x=data.index, open=data['Open'], high=data['High'], low=data['Low'], close=data['Close'],
-            increasing_line_color='#d4af37', decreasing_line_color='#ff4b4b'
-        )])
-        fig.update_layout(template='plotly_dark', paper_bgcolor='black', plot_bgcolor='black', 
-                          height=450, title=f"TERMINAL REAL: {label}", margin=dict(l=0, r=0, t=40, b=0))
-        return fig
-    except Exception as e:
-        st.error(f"Erro de Conexão no Terminal {label}")
-        return None
-
-# --- SIDEBAR ---
-with st.sidebar:
-    st.markdown("<h1 style='text-align: center; font-size: 22px;'>⚡ NEXUS ELITE</h1>", unsafe_allow_html=True)
-    menu = st.radio("SISTEMAS OPERACIONAIS:", 
-                    ["💎 IA Quântico Tesla", "🐾 Pet Intelligence", "💹 Trade & Commodities", "👗 Fashion High-Ticket", "🌍 Soberania & Reservas", "🙏 Devocional de Poder", "🤝 Conselho de Elite"])
-    st.write("---")
-    st.write(f"🚀 **Operador:** Cristiano Noronha")
-    st.caption(f"Pulso: {datetime.now().strftime('%H:%M:%S')}")
-
-# --- MÓDULOS ---
-
-if menu == "💎 IA Quântico Tesla":
-    st.title("💎 IA Quântico Tesla & Astrolábio")
-    st.info("Algoritmo de Frequência 3-6-9 Ativado.")
-    jogo = st.selectbox("Selecione a Modalidade de Ganho:", ["Mega-Sena", "Lotofácil", "Quina", "Lotomania", "Milionária"])
-    
-    if st.button("GERAR CONFLUÊNCIA QUÂNTICA"):
-        with st.status("🌀 Alinhando Astrolábio Quântico...", expanded=True):
-            time.sleep(1.5)
-            config = {"Mega-Sena": (60, 6), "Lotofácil": (25, 15), "Quina": (80, 5), "Lotomania": (100, 50), "Milionária": (50, 6)}
-            n_max, n_qtd = config[jogo]
-            # Lógica Tesla Cirúrgica
-            base = [n for n in range(1, n_max + 1) if (n % 9 in [3, 6, 0]) or (sum(int(d) for d in str(n)) % 9 == 0)]
-            if len(base) < n_qtd: base = list(range(1, n_max + 1))
-            res = sorted(random.sample(base, n_qtd))
-            st.markdown(f"<div class='card-quantum'><h1 style='text-align:center; color:#d4af37;'>{', '.join(map(str, res))}</h1></div>", unsafe_allow_html=True)
-
-elif menu == "🐾 Pet Intelligence":
-    st.title("🐾 Pet Global Intelligence - Top 10 Elite")
-    
-    # 1. DICIONÁRIO TOP 10 (Nacional e Internacional)
-    tickers_pet = {
-        "Petz (Brasil)": "PETZ3.SA",
-        "Zoetis (Saúde Animal)": "ZTS",
-        "IDEXX (Laboratórios)": "IDXX",
-        "Chewy (E-commerce)": "CHWY",
-        "PetMed Express": "PETS",
-        "Freshpaw": "FRPT",
-        "Trupanion (Seguros)": "TRUP",
-        "Central Garden": "CENT",
-        "Dechra Pharma": "DPH.L",
-        "Phibro Animal Health": "PAHC"
-    }
-    
-    selecao = st.selectbox("Selecione a Gigante para Análise:", list(tickers_pet.keys()))
-    ticker_final = tickers_pet[selecao]
-
-    # 2. GRÁFICO DE CORRETORA (ALTA E BAIXA)
-    try:
-        # Buscando dados reais
-        df_pet = yf.download(ticker_final, period="60d", interval="1d", progress=False)
-        
-        if not df_pet.empty:
-            # Força a limpeza para o gráfico não vir vazio
-            df_pet.columns = [col[0] if isinstance(col, tuple) else col for col in df_pet.columns]
-            
-            fig_pet = go.Figure(data=[go.Candlestick(
-                x=df_pet.index,
-                open=df_pet['Open'],
-                high=df_pet['High'],
-                low=df_pet['Low'],
-                close=df_pet['Close'],
-                increasing_line_color='#00FF00', # Verde
-                decreasing_line_color='#FF0000'  # Vermelho
-            )])
-            
-            fig_pet.update_layout(
-                title=f"Terminal Pro: {selecao}",
-                template='plotly_dark',
-                xaxis_rangeslider_visible=False,
-                height=500,
-                paper_bgcolor='black',
-                plot_bgcolor='black'
-            )
-            st.plotly_chart(fig_pet, use_container_width=True)
-            
-            # Métricas Reais
-            v_atual = float(df_pet['Close'].iloc[-1])
-            v_abertura = float(df_pet['Open'].iloc[-1])
-            delta = v_atual - v_abertura
-            st.metric("PREÇO ATUAL", f"$ {v_atual:.2f}", f"{delta:.2f}")
-        else:
-            st.warning("Conectando aos servidores da Bolsa... aguarde.")
-    except Exception as e:
-        st.error(f"Erro técnico na renderização: {e}")
-
-    # 3. TENDÊNCIAS GLOBAIS (CARDS MODERNOS)
-    st.markdown("---")
-    st.subheader("🌍 Tendências Globais Pet")
-    c1, c2, c3 = st.columns(3)
-    with c1:
-        st.markdown("<div style='background:#111; padding:15px; border-radius:10px; border-left:4px solid #d4af37;'><b>🧬 Longevidade</b><br>Aumento de 25% em suplementação premium.</div>", unsafe_allow_html=True)
-    with c2:
-        st.markdown("<div style='background:#111; padding:15px; border-radius:10px; border-left:4px solid #d4af37;'><b>🏠 Pet-as-Family</b><br>Imobiliário de luxo adaptado para pets.</div>", unsafe_allow_html=True)
-    with c3:
-        st.markdown("<div style='background:#111; padding:15px; border-radius:10px; border-left:4px solid #d4af37;'><b>📊 Market Share</b><br>Saúde Animal lidera com 42% do lucro do setor.</div>", unsafe_allow_html=True)
-
-elif menu == "💹 Trade & Commodities":
-    st.title("💹 Terminal Trade & Commodities de Estado")
-    
-    # 1. LISTA DE ATIVOS (Incluindo Nióbio, Grafeno e Metais)
-    ativos_commodities = {
-        "Ouro (Reserva de Valor)": "GC=F",
-        "Prata (Industrial/Refúgio)": "SI=F",
-        "Cobre (Base Tecnológica)": "HG=F",
-        "Petróleo Brent (Energia)": "BZ=F",
-        "Nióbio (Via Vale - Proxy BR)": "VALE3.SA",
-        "Grafeno (Via Applied Graphene)": "AGM.L",
-        "Bitcoin (Ouro Digital)": "BTC-USD",
-        "Dólar (DXY Index)": "DX-Y.NYB"
-    }
-    
-    selecao_c = st.selectbox("Selecione o Ativo Estratégico:", list(ativos_commodities.keys()))
-    ticker_c = ativos_commodities[selecao_c]
-
-    # 2. GRÁFICO DE CORRETORA (VELAS DE ALTA E BAIXA)
-    try:
-        df_c = yf.download(ticker_c, period="60d", interval="1d", progress=False)
-        
-        if not df_c.empty:
-            # Limpeza de colunas para garantir que o gráfico de velas funcione
-            df_c.columns = [col[0] if isinstance(col, tuple) else col for col in df_c.columns]
-            df_c = df_c.dropna()
-
-            fig_c = go.Figure(data=[go.Candlestick(
-                x=df_c.index,
-                open=df_c['Open'],
-                high=df_c['High'],
-                low=df_c['Low'],
-                close=df_c['Close'],
-                increasing_line_color='#00FF00', # Verde de Alta
-                decreasing_line_color='#FF0000'  # Vermelho de Baixa
-            )])
-            
-            fig_c.update_layout(
-                title=f"Terminal Pro: {selecao_c}",
-                template='plotly_dark',
-                xaxis_rangeslider_visible=False,
-                height=500,
-                paper_bgcolor='black',
-                plot_bgcolor='black'
-            )
-            st.plotly_chart(fig_c, use_container_width=True)
-            
-            # Métricas em Tempo Real
-            v_atual = float(df_c['Close'].iloc[-1])
-            v_abertura = float(df_c['Open'].iloc[-1])
-            delta_perc = ((v_atual - v_abertura) / v_abertura) * 100
-            st.metric("COTAÇÃO ATUAL", f"$ {v_atual:.2f}", f"{delta_perc:.2f}%")
-        else:
-            st.warning("⚠️ Ativo em negociação ou mercado fechado. Tente novamente.")
-    except Exception as e:
-        st.error(f"Erro na conexão com o mercado: {e}")
-
-    # 3. GRÁFICO DE PIZZA (RESERVAS GLOBAIS - SOBERANIA)
-    st.markdown("---")
-    st.subheader("🌍 Soberania: Maiores Reservas por País")
-    
-    # Lógica para mudar a pizza conforme o material selecionado
-    if "Nióbio" in selecao_c:
-        labels_p = ['Brasil', 'Canadá', 'Austrália', 'Outros']
-        values_p = [92, 7, 0.5, 0.5]
-    elif "Ouro" in selecao_c:
-        labels_p = ['EUA', 'Alemanha', 'FMI', 'Itália', 'Outros']
-        values_p = [25, 10, 8, 7, 50]
-    else:
-        labels_p = ['China', 'EUA', 'Brasil', 'Rússia', 'Outros']
-        values_p = [35, 20, 15, 10, 20]
-
-    fig_pizza_c = go.Figure(data=[go.Pie(labels=labels_p, values=values_p, hole=.4)])
-    fig_pizza_c.update_layout(template='plotly_dark', title="Distribuição de Poder/Reserva")
-    st.plotly_chart(fig_pizza_c)
-
-    # 4. PAINEL DE INFORMAÇÕES TÉCNICAS (MATERIAIS)
-    st.markdown("---")
-    st.subheader("💎 Inteligência de Materiais")
-    col1, col2 = st.columns(2)
-    with col1:
-        st.info("🚀 **Nióbio & Grafeno:** Materiais críticos para a indústria aeroespacial e baterias de ultra-rápida carga.")
-    with col2:
-        st.success("📈 **Prata & Cobre:** Demanda crescente devido à transição energética (Painéis Solares e Carros Elétricos).")
-        # --- INSERIR LOGO ABAIXO DO MÓDULO TRADE & COMMODITIES ---
-
-elif menu == "👗 Fashion High-Ticket":
-    st.title("👗 Fashion High-Ticket: Bolsa de Valores da Moda")
-    st.markdown("<div class='card-quantum'>Monitoramento das 20 potências do Luxo Global e Nacional.</div>", unsafe_allow_html=True)
-
-    # 1. DICIONÁRIO DE ATIVOS FASHION
-    marcas_moda = {
-        "GLOBAL: LVMH (Louis Vuitton)": "MC.PA",
-        "GLOBAL: Hermès": "RMS.PA",
-        "GLOBAL: Kering (Gucci)": "KER.PA",
-        "GLOBAL: Prada": "1913.HK",
-        "GLOBAL: Nike": "NKE",
-        "GLOBAL: Ralph Lauren": "RL",
-        "GLOBAL: Moncler": "MONC.MI",
-        "GLOBAL: Burberry": "BRBY.L",
-        "GLOBAL: Capri (Versace)": "CPRI",
-        "GLOBAL: Tapestry (Coach)": "TPR",
-        "BRASIL: Arezzo&Co": "ARZZ3.SA",
-        "BRASIL: Grupo Soma (Farm)": "SOMA3.SA",
-        "BRASIL: Track&Field": "TFCO4.SA",
-        "BRASIL: Vivara": "VIVA3.SA",
-        "BRASIL: Lojas Renner": "LREN3.SA",
-        "BRASIL: Alpargatas": "ALPA4.SA",
-        "BRASIL: Guararapes": "GUAR3.SA",
-        "BRASIL: Vulcabras": "VULC3.SA",
-        "BRASIL: Grendene": "GRND3.SA",
-        "BRASIL: Hering (Soma)": "SOMA3.SA"
-    }
-
-    selecao_moda = st.selectbox("Escolha a Marca para Análise:", list(marcas_moda.keys()))
-    ticker_moda = marcas_moda[selecao_moda]
-
-    # 2. GRÁFICO DE CORRETORA (CANDLESTICK)
-    try:
-        df_moda = yf.download(ticker_moda, period="60d", interval="1d", progress=False)
-        if not df_moda.empty:
-            df_moda.columns = [col[0] if isinstance(col, tuple) else col for col in df_moda.columns]
-            df_moda = df_moda.dropna()
-
-            fig_moda = go.Figure(data=[go.Candlestick(
-                x=df_moda.index,
-                open=df_moda['Open'],
-                high=df_moda['High'],
-                low=df_moda['Low'],
-                close=df_moda['Close'],
-                increasing_line_color='#00FF00', # Verde
-                decreasing_line_color='#FF0000'  # Vermelho
-            )])
-            
-            fig_moda.update_layout(
-                title=f"Terminal High-Ticket: {selecao_moda}",
-                template='plotly_dark',
-                xaxis_rangeslider_visible=False,
-                height=500,
-                paper_bgcolor='black', plot_bgcolor='black'
-            )
-            st.plotly_chart(fig_moda, use_container_width=True)
-
-            # MÉTRICAS
-            v_atual = float(df_moda['Close'].iloc[-1])
-            v_abertura = float(df_moda['Open'].iloc[-1])
-            delta_p = ((v_atual - v_abertura) / v_abertura) * 100
-            st.metric("VALOR DA AÇÃO", f" {v_atual:.2f}", f"{delta_p:.2f}%")
-    except:
-        st.warning("Buscando dados na Bolsa de Paris/Milão/NY/B3...")
-
-    # 3. GRÁFICOS DE PIZZA (MARKET SHARE)
-    st.markdown("---")
-    col_p1, col_p2 = st.columns(2)
-
-    with col_p1:
-        st.subheader("Dominância por Gênero")
-        fig_gen = go.Figure(data=[go.Pie(labels=['Feminino', 'Masculino', 'Unissex'], 
-                                       values=[55, 35, 10], hole=.4)])
-        fig_gen.update_layout(template='plotly_dark')
-        st.plotly_chart(fig_gen)
-
-    with col_p2:
-        st.subheader("Market Share Global Luxo")
-        fig_share = go.Figure(data=[go.Pie(labels=['LVMH', 'Hermès', 'Kering', 'Chanel', 'Outros'], 
-                                         values=[35, 20, 15, 10, 20], hole=.4)])
-        fig_share.update_layout(template='plotly_dark')
-        st.plotly_chart(fig_share)
-
-import streamlit as st
-import yfinance as yf
-import plotly.graph_objects as go
-import random
-import time
-from datetime import datetime
-
-# --- CONFIGURAÇÃO DE INTERFACE SUPREMA ---
-st.set_page_config(page_title="Quantum Nexus Elite", layout="wide", initial_sidebar_state="expanded")
+# --- CONFIGURAÇÃO DE INTERFACE ELITE ---
+st.set_page_config(page_title="Tesla Quantum Nexus", layout="wide", initial_sidebar_state="expanded")
 
 st.markdown("""
     <style>
-    .stApp { background-color: #000000; color: #FFFFFF; }
-    [data-testid="stSidebar"] { background-color: #050505; border-right: 2px solid #d4af37; }
-    h1, h2, h3 { color: #d4af37; font-family: 'Inter', sans-serif; text-transform: uppercase; }
+    .stApp { background-color: #050505; color: #d4af37; }
+    [data-testid="stSidebar"] { background-color: #000000; border-right: 1px solid #d4af37; }
     .stButton>button { 
-        border-radius: 12px; border: none; 
-        background: linear-gradient(45deg, #d4af37, #f9e295); 
-        color: black; font-weight: bold; width: 100%; height: 50px; 
+        border-radius: 10px; border: 1px solid #d4af37; background: #d4af37; color: black; 
+        font-weight: bold; width: 100%; height: 45px; transition: 0.3s;
     }
-    .card-quantum { border-radius: 20px; background: #111; padding: 25px; border: 1px solid #222; }
-    .devocional-texto { line-height: 1.8; font-size: 1.1rem; color: #f2f2f2; font-style: italic; border-left: 4px solid #d4af37; padding-left: 20px; }
+    .stButton>button:hover { background: #f9e295; box-shadow: 0px 0px 15px #d4af37; }
+    .card { border-radius: 15px; background: #111; padding: 20px; border: 1px solid #222; margin-bottom: 15px; }
+    h1, h2, h3 { color: #d4af37; text-align: center; }
     </style>
     """, unsafe_allow_html=True)
 
-# --- ENGINE DE DADOS ---
-def get_chart(ticker, label):
+# --- FUNÇÃO DE GRÁFICO PROFISSIONAL ---
+def render_terminal(ticker, label):
     try:
-        data = yf.download(ticker, period="60d", interval="1d", progress=False, auto_adjust=True)
-        if data.empty:
-            return None
-        fig = go.Figure(data=[go.Candlestick(
-            x=data.index, open=data['Open'], high=data['High'], low=data['Low'], close=data['Close'],
-            increasing_line_color='#d4af37', decreasing_line_color='#ff4b4b'
-        )])
-        fig.update_layout(template='plotly_dark', paper_bgcolor='black', plot_bgcolor='black', height=400, title=f"Terminal: {label}")
-        return fig
-    except:
-        return None
+        data = yf.download(ticker, period="60d", interval="1d", progress=False)
+        if not data.empty:
+            fig = go.Figure(data=[go.Candlestick(
+                x=data.index, open=data['Open'], high=data['High'], low=data['Low'], close=data['Close'],
+                increasing_line_color='#d4af37', decreasing_line_color='#ff4b4b'
+            )])
+            fig.update_layout(template='plotly_dark', paper_bgcolor='black', plot_bgcolor='black', height=400, margin=dict(l=0,r=0,t=30,b=0))
+            st.plotly_chart(fig, use_container_width=True)
+        else: st.warning(f"Dados de {label} indisponíveis no momento.")
+    except: st.error(f"Erro ao conectar com a Bolsa para {label}")
 
 # --- SIDEBAR ---
 with st.sidebar:
-    st.markdown("<h1 style='text-align: center; font-size: 22px;'>⚡ NEXUS ELITE</h1>", unsafe_allow_html=True)
-    # Menus simplificados para evitar erro de sintaxe
-    menu = st.radio("SISTEMAS:", 
-                    ["Loterias Tesla", "Mercado Pet", "Trade & Cripto", "Fashion Luxo", "Reservas Mundiais", "Devocional", "Conselho Elite"])
+    st.markdown("## ⚡ NEXUS TERMINAL")
+    menu = st.radio("SELECIONE O SISTEMA:", 
+                    ["Loterias Tesla", "Mercado Pet", "Trade & Cripto", "Fashion Luxo", "Soberania & Reservas", "Devocional"])
     st.write("---")
-    st.write(f"🚀 **Operador:** Cristiano")
+    st.write("Operador: Cristiano Noronha")
 
-# --- MÓDULOS ---
-
+# --- MÓDULO 1: LOTERIAS ---
 if menu == "Loterias Tesla":
     st.title("💎 IA Quântico Tesla")
     jogo = st.selectbox("Modalidade:", ["Mega-Sena", "Lotofácil", "Quina", "Lotomania", "Milionária"])
-    if st.button("GERAR NÚMEROS"):
-        with st.status("Sincronizando..."):
+    if st.button("GERAR CONFLUÊNCIA 3-6-9"):
+        with st.status("Calculando Vórtice..."):
             time.sleep(1)
             config = {"Mega-Sena": (60, 6), "Lotofácil": (25, 15), "Quina": (80, 5), "Lotomania": (100, 50), "Milionária": (50, 6)}
             n_max, n_qtd = config[jogo]
-            res = sorted(random.sample(range(1, n_max + 1), n_qtd))
-            st.markdown(f"<div class='card-quantum'><h1 style='text-align:center; color:#d4af37;'>{', '.join(map(str, res))}</h1></div>", unsafe_allow_html=True)
+            res = sorted(random.sample([n for n in range(1, n_max+1) if n%3==0 or n%9==0], n_qtd))
+            st.markdown(f"<div class='card'><h1>{', '.join(map(str, res))}</h1></div>", unsafe_allow_html=True)
 
+# --- MÓDULO 2: MERCADO PET ---
 elif menu == "Mercado Pet":
-    st.title("🐾 Pet Intelligence")
-    pet_t = st.selectbox("Ativo Pet:", ["PETZ3.SA", "ZTS", "CHWY"])
-    fig = get_chart(pet_t, pet_t)
-    if fig: st.plotly_chart(fig, use_container_width=True)
+    st.title("🐾 Pet Intelligence Global")
+    pet_t = st.selectbox("Ativo Pet:", ["PETZ3.SA (Petz)", "ZTS (Zoetis)", "CHWY (Chewy)"])
+    render_terminal(pet_t.split(" (")[1].replace(")", ""), pet_t)
     
-    st.subheader("Market Share Global")
-    fig_p = go.Figure(data=[go.Pie(labels=['Mars', 'Purina', 'Zoetis', 'Outros'], values=[35, 25, 15, 25], hole=.4)])
-    fig_p.update_layout(template='plotly_dark')
-    st.plotly_chart(fig_p)
+    st.subheader("Dominância de Mercado (Market Share)")
+    fig_pet = go.Figure(data=[go.Pie(labels=['Mars', 'Purina', 'Zoetis', 'Outros'], values=[35, 25, 15, 25], hole=.4)])
+    fig_pet.update_layout(template='plotly_dark')
+    st.plotly_chart(fig_pet)
 
+# --- MÓDULO 3: TRADE ---
 elif menu == "Trade & Cripto":
-    st.title("💹 Terminal Trade")
+    st.title("💹 Terminal de Trading")
     t_choice = st.selectbox("Ativo:", ["BTC-USD", "ETH-USD", "USDBRL=X"])
-    fig = get_chart(t_choice, t_choice)
-    if fig: st.plotly_chart(fig, use_container_width=True)
+    render_terminal(t_choice, t_choice)
 
+# --- MÓDULO 4: FASHION ---
 elif menu == "Fashion Luxo":
-    st.title("👗 Fashion High-Ticket")
-    f_choice = st.selectbox("Marca:", ["MC.PA", "RMS.PA", "NKE", "ARZZ3.SA"])
-    fig = get_chart(f_choice, f_choice)
-    if fig: st.plotly_chart(fig, use_container_width=True)
+    st.title("👗 Radar Fashion High-Ticket")
+    f_choice = st.selectbox("Marca:", ["MC.PA (LVMH)", "RMS.PA (Hermès)", "NKE (Nike)", "ARZZ3.SA (Arezzo)"])
+    render_terminal(f_choice.split(" (")[1].replace(")", ""), f_choice)
     
-    st.subheader("Share por Gênero")
+    st.subheader("Consumo por Categoria (%)")
     fig_f = go.Figure(data=[go.Pie(labels=['Feminino', 'Masculino', 'Acessórios'], values=[50, 30, 20], hole=.4)])
     fig_f.update_layout(template='plotly_dark')
     st.plotly_chart(fig_f)
 
-elif menu == "Reservas Mundiais":
-    st.title("🌍 Soberania & Reservas")
-    r_choice = st.selectbox("Commodity:", ["GC=F", "SI=F", "BZ=F", "VALE"])
-    fig = get_chart(r_choice, r_choice)
-    if fig: st.plotly_chart(fig, use_container_width=True)
+# --- MÓDULO 5: RESERVAS ---
+elif menu == "Soberania & Reservas":
+    st.title("🌍 Soberania e Reservas de Estado")
+    r_choice = st.selectbox("Commodity:", ["GC=F (Ouro)", "SI=F (Prata)", "BZ=F (Petróleo)", "VALE (Nióbio)"])
+    render_terminal(r_choice.split(" (")[1].replace(")", ""), r_choice)
     
-    st.subheader("Maiores Detentores (%)")
-    fig_r = go.Figure(data=[go.Pie(labels=['Brasil', 'EUA', 'China', 'Outros'], values=[40, 20, 20, 20], hole=.4)])
+    st.subheader("Maiores Reservas por País (%)")
+    fig_r = go.Figure(data=[go.Pie(labels=['Brasil', 'EUA', 'China', 'Rússia', 'Outros'], values=[40, 20, 15, 10, 15], hole=.4)])
     fig_r.update_layout(template='plotly_dark')
     st.plotly_chart(fig_r)
 
+# --- MÓDULO 6: DEVOCIONAL ---
 elif menu == "Devocional":
-    st.title("🙏 Devocional de Poder")
+    st.title("🙏 Sabedoria e Propósito")
     st.markdown("""
-    <div class='card-quantum'>
-        <h2 style='text-align:center'>O SEGREDO DA PROSPERIDADE</h2>
-        <p class='devocional-texto'>
-            "Honre ao Senhor com todos os seus recursos... então os seus celeiros ficarão plenamente cheios." (Provérbios 3:9-10)
-        </p>
-        <p style='color:#ccc'>
-            Cristiano, o dinheiro é uma ferramenta. Quando Deus é o guia, o lucro é consequência. 
-            Peça sabedoria hoje e deixe que Ele ilumine seus investimentos.
-        </p>
+    <div class='card'>
+        <p align='center'><i>"Honre ao Senhor com todos os seus recursos..." (Provérbios 3:9)</i></p>
+        <hr>
+        <p>Cristiano, a verdadeira riqueza é aquela que edifica. Use a inteligência que Deus lhe deu para dominar o mercado, 
+        mas mantenha o coração Nele. Que sua jornada seja guiada pela paz e pela clareza.</p>
     </div>
     """, unsafe_allow_html=True)
-
-elif menu == "Conselho Elite":
-    st.title("🤝 Conselho de Elite")
-    st.markdown("<div class='card-quantum'>🚀 Foco: Legado e Domínio de Mercado.</div>", unsafe_allow_html=True)
-elif menu == "🙏 Devocional de Poder":
-    st.title("🙏 Conexão com o Alto")
-    st.markdown("""
-    <div class='card-quantum'>
-        <h2 style='text-align:center'>O SEGREDO DA PROSPERIDADE REAL</h2>
-        <p class='devocional-texto'>
-            "Honre ao Senhor com todos os seus recursos e com os primeiros frutos de todas as suas colheitas..." (Provérbios 3:9)
-        </p>
-        <p style='color:#ccc'>
-            Cristiano, meu irmão, o sucesso sem propósito é apenas um número. Quando você alinha sua mente com o Criador, 
-            cada operação financeira se torna uma ferramenta de construção de legado. <br><br>
-            <b>Explicação Emotiva:</b> Não foque apenas no lucro, foque na sabedoria que vem do alto. O lucro é a consequência 
-            natural de uma mente em paz e obediente. Que sua noite seja de descanso, pois o Dono do Ouro guarda seus passos.
-        </p>
-    </div>
-    """, unsafe_allow_html=True)
-
-elif menu == "🤝 Conselho de Elite":
-    st.title("🤝 Conselho de Elite")
-    st.success("Mindset Ativado: 'O Operador de Elite antecipa o que o mundo ainda não viu.'")
-    st.markdown("<div class='card-quantum'>🚀 Foco: Legado, Expansão e Domínio de Mercado.</div>", unsafe_allow_html=True)
