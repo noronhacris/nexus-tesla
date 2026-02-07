@@ -70,13 +70,12 @@ if menu == "💎 IA Quântico Tesla":
             res = sorted(random.sample(base, n_qtd))
             st.markdown(f"<div class='card-quantum'><h1 style='text-align:center; color:#d4af37;'>{', '.join(map(str, res))}</h1></div>", unsafe_allow_html=True)
 
-elif opcao == "🐾 Mercado Pet":
-    st.title("🐾 Pet Global Intelligence - Top 10 & Terminal Pro")
+elif menu == "🐾 Pet Intelligence":
+    st.title("🐾 Pet Global Intelligence - Top 10 Elite")
     
-    # 1. LISTA AMPLIADA TOP 10 (Nacional e Internacional)
+    # 1. DICIONÁRIO TOP 10 (Nacional e Internacional)
     tickers_pet = {
         "Petz (Brasil)": "PETZ3.SA",
-        "Cobasi (Referência BR)": "PETZ3.SA", # Usando Petz como proxy de mercado BR
         "Zoetis (Saúde Animal)": "ZTS",
         "IDEXX (Laboratórios)": "IDXX",
         "Chewy (E-commerce)": "CHWY",
@@ -84,29 +83,33 @@ elif opcao == "🐾 Mercado Pet":
         "Freshpaw": "FRPT",
         "Trupanion (Seguros)": "TRUP",
         "Central Garden": "CENT",
-        "Covetrus": "CVET"
+        "Dechra Pharma": "DPH.L",
+        "Phibro Animal Health": "PAHC"
     }
     
-    selecao = st.selectbox("Selecione a Gigante Pet para Análise:", list(tickers_pet.keys()))
+    selecao = st.selectbox("Selecione a Gigante para Análise:", list(tickers_pet.keys()))
     ticker_final = tickers_pet[selecao]
 
-    # 2. GRÁFICO DE CORRETORA (ALTA E BAIXA REAL)
+    # 2. GRÁFICO DE CORRETORA (ALTA E BAIXA)
     try:
-        data = yf.download(ticker_final, period="60d", interval="1d", progress=False)
-        if not data.empty:
-            data = data.dropna() # Limpeza cirúrgica para o gráfico aparecer
+        # Buscando dados reais
+        df_pet = yf.download(ticker_final, period="60d", interval="1d", progress=False)
+        
+        if not df_pet.empty:
+            # Força a limpeza para o gráfico não vir vazio
+            df_pet.columns = [col[0] if isinstance(col, tuple) else col for col in df_pet.columns]
             
-            fig = go.Figure(data=[go.Candlestick(
-                x=data.index,
-                open=data['Open'],
-                high=data['High'],
-                low=data['Low'],
-                close=data['Close'],
-                increasing_line_color='#00FF00', # Verde de Corretora
-                decreasing_line_color='#FF0000'  # Vermelho de Corretora
+            fig_pet = go.Figure(data=[go.Candlestick(
+                x=df_pet.index,
+                open=df_pet['Open'],
+                high=df_pet['High'],
+                low=df_pet['Low'],
+                close=df_pet['Close'],
+                increasing_line_color='#00FF00', # Verde
+                decreasing_line_color='#FF0000'  # Vermelho
             )])
             
-            fig.update_layout(
+            fig_pet.update_layout(
                 title=f"Terminal Pro: {selecao}",
                 template='plotly_dark',
                 xaxis_rangeslider_visible=False,
@@ -114,53 +117,28 @@ elif opcao == "🐾 Mercado Pet":
                 paper_bgcolor='black',
                 plot_bgcolor='black'
             )
-            st.plotly_chart(fig, use_container_width=True)
+            st.plotly_chart(fig_pet, use_container_width=True)
             
-            # Métricas de Variação
-            vlr_atual = data['Close'].iloc[-1]
-            vlr_ontem = data['Close'].iloc[-2]
-            variacao = ((vlr_atual - vlr_ontem) / vlr_ontem) * 100
-            st.metric("PREÇO ATUAL", f"$ {vlr_atual:.2f}", f"{variacao:.2f}%")
-    except:
-        st.warning("Aguardando conexão com o servidor da Bolsa...")
+            # Métricas Reais
+            v_atual = float(df_pet['Close'].iloc[-1])
+            v_abertura = float(df_pet['Open'].iloc[-1])
+            delta = v_atual - v_abertura
+            st.metric("PREÇO ATUAL", f"$ {v_atual:.2f}", f"{delta:.2f}")
+        else:
+            st.warning("Conectando aos servidores da Bolsa... aguarde.")
+    except Exception as e:
+        st.error(f"Erro técnico na renderização: {e}")
 
-    # 3. PAINEL DE TENDÊNCIAS GLOBAIS (INFORMAÇÕES REAIS)
-    st.write("---")
-    st.subheader("🌍 Tendências de Mercado em Tempo Real")
-    
-    col1, col2, col3 = st.columns(3)
-    
-    with col1:
-        st.markdown("""
-        <div style='background:#111; padding:15px; border-radius:10px; border-left:4px solid #d4af37;'>
-        <b>🧬 Humanização 2.0</b><br>
-        Crescimento de 30% em planos de saúde pet e alimentação 'human-grade'.
-        </div>""", unsafe_allow_html=True)
-        
-    with col2:
-        st.markdown("""
-        <div style='background:#111; padding:15px; border-radius:10px; border-left:4px solid #d4af37;'>
-        <b>🤖 Pet Tech</b><br>
-        Dispositivos de monitoramento via IA e câmeras inteligentes dominam o mercado USA.
-        </div>""", unsafe_allow_html=True)
-        
-    with col3:
-        st.markdown("""
-        <div style='background:#111; padding:15px; border-radius:10px; border-left:4px solid #d4af37;'>
-        <b>📦 E-commerce Pet</b><br>
-        O modelo de assinatura (recurrence) já representa 70% da receita da Chewy.
-        </div>""", unsafe_allow_html=True)
-
-    # 4. GRÁFICO DE PIZZA (DOMINÂNCIA)
-    st.write("---")
-    st.subheader("📊 Dominância de Mercado (Market Share)")
-    fig_pizza = go.Figure(data=[go.Pie(
-        labels=['Saúde Animal', 'Alimentação', 'Serviços/Estética', 'Acessórios Tech'],
-        values=[40, 35, 15, 10],
-        hole=.4
-    )])
-    fig_pizza.update_layout(template='plotly_dark')
-    st.plotly_chart(fig_pizza)
+    # 3. TENDÊNCIAS GLOBAIS (CARDS MODERNOS)
+    st.markdown("---")
+    st.subheader("🌍 Tendências Globais Pet")
+    c1, c2, c3 = st.columns(3)
+    with c1:
+        st.markdown("<div style='background:#111; padding:15px; border-radius:10px; border-left:4px solid #d4af37;'><b>🧬 Longevidade</b><br>Aumento de 25% em suplementação premium.</div>", unsafe_allow_html=True)
+    with c2:
+        st.markdown("<div style='background:#111; padding:15px; border-radius:10px; border-left:4px solid #d4af37;'><b>🏠 Pet-as-Family</b><br>Imobiliário de luxo adaptado para pets.</div>", unsafe_allow_html=True)
+    with c3:
+        st.markdown("<div style='background:#111; padding:15px; border-radius:10px; border-left:4px solid #d4af37;'><b>📊 Market Share</b><br>Saúde Animal lidera com 42% do lucro do setor.</div>", unsafe_allow_html=True)
 
 elif menu == "💹 Trade & Commodities":
     st.title("💹 Terminal Trade & Cripto")
