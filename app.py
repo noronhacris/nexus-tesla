@@ -308,99 +308,126 @@ elif menu == "👗 Fashion High-Ticket":
                                          values=[35, 20, 15, 10, 20], hole=.4)])
         fig_share.update_layout(template='plotly_dark')
         st.plotly_chart(fig_share)
-        elif menu == "🌍 Soberania & Reservas":
-    st.title("🌍 Soberania & Reservas: O Poder das Nações")
-    st.markdown("<div class='card-quantum'>Monitoramento de ativos estratégicos e reservas de segurança nacional.</div>", unsafe_allow_html=True)
 
-    # 1. ATIVOS ESTRATÉGICOS
-    ativos_soberania = {
-        "Ouro (Reserva Global)": "GC=F",
-        "Prata (Metal Industrial)": "SI=F",
-        "Nióbio (Via Vale - Proxy)": "VALE3.SA",
-        "Petróleo Brent (Energia)": "BZ=F",
-        "Urânio (Energia Nuclear)": "URA",
-        "Cobre (Transição Energética)": "HG=F"
+import streamlit as st
+import yfinance as yf
+import plotly.graph_objects as go
+import random
+import time
+from datetime import datetime
+
+# --- CONFIGURAÇÃO DE INTERFACE SUPREMA ---
+st.set_page_config(page_title="Quantum Nexus Elite", layout="wide", initial_sidebar_state="expanded")
+
+st.markdown("""
+    <style>
+    .stApp { background-color: #000000; color: #FFFFFF; }
+    [data-testid="stSidebar"] { background-color: #050505; border-right: 2px solid #d4af37; }
+    h1, h2, h3 { color: #d4af37; font-family: 'Inter', sans-serif; text-transform: uppercase; }
+    .stButton>button { 
+        border-radius: 12px; border: none; 
+        background: linear-gradient(45deg, #d4af37, #f9e295); 
+        color: black; font-weight: bold; width: 100%; height: 50px; 
     }
+    .card-quantum { border-radius: 20px; background: #111; padding: 25px; border: 1px solid #222; }
+    .devocional-texto { line-height: 1.8; font-size: 1.1rem; color: #f2f2f2; font-style: italic; border-left: 4px solid #d4af37; padding-left: 20px; }
+    </style>
+    """, unsafe_allow_html=True)
 
-    selecao_s = st.selectbox("Selecione o Ativo de Estado:", list(ativos_soberania.keys()))
-    ticker_s = ativos_soberania[selecao_s]
-
-    # 2. GRÁFICO DE CORRETORA (CANDLESTICK)
+# --- ENGINE DE DADOS ---
+def get_chart(ticker, label):
     try:
-        df_s = yf.download(ticker_s, period="60d", interval="1d", progress=False)
-        if not df_s.empty:
-            df_s.columns = [col[0] if isinstance(col, tuple) else col for col in df_s.columns]
-            df_s = df_s.dropna()
-
-            fig_s = go.Figure(data=[go.Candlestick(
-                x=df_s.index,
-                open=df_s['Open'],
-                high=df_s['High'],
-                low=df_s['Low'],
-                close=df_s['Close'],
-                increasing_line_color='#d4af37', # Dourado para alta
-                decreasing_line_color='#ff4b4b'  # Vermelho para queda
-            )])
-            
-            fig_s.update_layout(
-                title=f"Monitoramento de Soberania: {selecao_s}",
-                template='plotly_dark',
-                xaxis_rangeslider_visible=False,
-                height=500,
-                paper_bgcolor='black', plot_bgcolor='black'
-            )
-            st.plotly_chart(fig_s, use_container_width=True)
-
-            # MÉTRICAS DE VALOR ESTRATÉGICO
-            v_atual = float(df_s['Close'].iloc[-1])
-            v_ontem = float(df_s['Close'].iloc[-2])
-            variacao = ((v_atual - v_ontem) / v_ontem) * 100
-            st.metric("PREÇO DE MERCADO", f"$ {v_atual:.2f}", f"{variacao:.2f}%")
+        data = yf.download(ticker, period="60d", interval="1d", progress=False, auto_adjust=True)
+        if data.empty:
+            return None
+        fig = go.Figure(data=[go.Candlestick(
+            x=data.index, open=data['Open'], high=data['High'], low=data['Low'], close=data['Close'],
+            increasing_line_color='#d4af37', decreasing_line_color='#ff4b4b'
+        )])
+        fig.update_layout(template='plotly_dark', paper_bgcolor='black', plot_bgcolor='black', height=400, title=f"Terminal: {label}")
+        return fig
     except:
-        st.warning("Sincronizando com o Banco Mundial e bolsas de commodities...")
+        return None
 
-    # 3. GRÁFICOS DE PIZZA (QUEM DETÉM O PODER)
-    st.markdown("---")
-    st.subheader("📊 Distribuição de Reservas Mundiais (%)")
-    col_r1, col_r2 = st.columns(2)
+# --- SIDEBAR ---
+with st.sidebar:
+    st.markdown("<h1 style='text-align: center; font-size: 22px;'>⚡ NEXUS ELITE</h1>", unsafe_allow_html=True)
+    # Menus simplificados para evitar erro de sintaxe
+    menu = st.radio("SISTEMAS:", 
+                    ["Loterias Tesla", "Mercado Pet", "Trade & Cripto", "Fashion Luxo", "Reservas Mundiais", "Devocional", "Conselho Elite"])
+    st.write("---")
+    st.write(f"🚀 **Operador:** Cristiano")
 
-    with col_r1:
-        # Dinâmica para Nióbio ou Ouro
-        if "Nióbio" in selecao_s:
-            labels_p = ['Brasil', 'Canadá', 'Austrália', 'Outros']
-            values_p = [92, 7, 0.5, 0.5]
-            st.write("**Reservas de Nióbio**")
-        elif "Ouro" in selecao_s:
-            labels_p = ['EUA', 'Alemanha', 'FMI', 'Itália', 'França', 'Rússia', 'China']
-            values_p = [25, 10, 8, 7, 7, 6, 5]
-            st.write("**Reservas de Ouro (Bancos Centrais)**")
-        else:
-            labels_p = ['China', 'EUA', 'Brasil', 'Rússia', 'Outros']
-            values_p = [35, 20, 15, 10, 20]
-            st.write("**Reservas Estratégicas Gerais**")
+# --- MÓDULOS ---
 
-        fig_res = go.Figure(data=[go.Pie(labels=labels_p, values=values_p, hole=.4)])
-        fig_res.update_layout(template='plotly_dark')
-        st.plotly_chart(fig_res)
+if menu == "Loterias Tesla":
+    st.title("💎 IA Quântico Tesla")
+    jogo = st.selectbox("Modalidade:", ["Mega-Sena", "Lotofácil", "Quina", "Lotomania", "Milionária"])
+    if st.button("GERAR NÚMEROS"):
+        with st.status("Sincronizando..."):
+            time.sleep(1)
+            config = {"Mega-Sena": (60, 6), "Lotofácil": (25, 15), "Quina": (80, 5), "Lotomania": (100, 50), "Milionária": (50, 6)}
+            n_max, n_qtd = config[jogo]
+            res = sorted(random.sample(range(1, n_max + 1), n_qtd))
+            st.markdown(f"<div class='card-quantum'><h1 style='text-align:center; color:#d4af37;'>{', '.join(map(str, res))}</h1></div>", unsafe_allow_html=True)
 
-    with col_r2:
-        st.info("💡 **Destaque Geopolítico:**")
-        if "Nióbio" in selecao_s:
-            st.write("O Brasil possui o monopólio prático do Nióbio. É o material essencial para turbinas de aviões e foguetes. Sem o Brasil, a indústria aeroespacial para.")
-        elif "Ouro" in selecao_s:
-            st.write("Bancos Centrais compraram níveis recordes de Ouro em 2024 e 2025 para reduzir a dependência do Dólar.")
-        else:
-            st.write("A transição energética depende de Cobre e Lítio. A China hoje domina 60% do processamento desses materiais.")
+elif menu == "Mercado Pet":
+    st.title("🐾 Pet Intelligence")
+    pet_t = st.selectbox("Ativo Pet:", ["PETZ3.SA", "ZTS", "CHWY"])
+    fig = get_chart(pet_t, pet_t)
+    if fig: st.plotly_chart(fig, use_container_width=True)
+    
+    st.subheader("Market Share Global")
+    fig_p = go.Figure(data=[go.Pie(labels=['Mars', 'Purina', 'Zoetis', 'Outros'], values=[35, 25, 15, 25], hole=.4)])
+    fig_p.update_layout(template='plotly_dark')
+    st.plotly_chart(fig_p)
 
-    # 4. TABELA DE SOBERANIA NACIONAL
-    st.markdown("---")
-    st.subheader("🇧🇷 Brasil: Potencial de Exportação Estratégica")
-    st.table({
-        "Material": ["Nióbio", "Minério de Ferro", "Petróleo", "Soja", "Lítio"],
-        "Posição Mundial": ["1º", "2º", "9º", "1º", "5º"],
-        "Status": ["Domínio Total", "Liderança de Mercado", "Expansão OPEP+", "Celeiro do Mundo", "Nova Fronteira"]
-    })
+elif menu == "Trade & Cripto":
+    st.title("💹 Terminal Trade")
+    t_choice = st.selectbox("Ativo:", ["BTC-USD", "ETH-USD", "USDBRL=X"])
+    fig = get_chart(t_choice, t_choice)
+    if fig: st.plotly_chart(fig, use_container_width=True)
 
+elif menu == "Fashion Luxo":
+    st.title("👗 Fashion High-Ticket")
+    f_choice = st.selectbox("Marca:", ["MC.PA", "RMS.PA", "NKE", "ARZZ3.SA"])
+    fig = get_chart(f_choice, f_choice)
+    if fig: st.plotly_chart(fig, use_container_width=True)
+    
+    st.subheader("Share por Gênero")
+    fig_f = go.Figure(data=[go.Pie(labels=['Feminino', 'Masculino', 'Acessórios'], values=[50, 30, 20], hole=.4)])
+    fig_f.update_layout(template='plotly_dark')
+    st.plotly_chart(fig_f)
+
+elif menu == "Reservas Mundiais":
+    st.title("🌍 Soberania & Reservas")
+    r_choice = st.selectbox("Commodity:", ["GC=F", "SI=F", "BZ=F", "VALE"])
+    fig = get_chart(r_choice, r_choice)
+    if fig: st.plotly_chart(fig, use_container_width=True)
+    
+    st.subheader("Maiores Detentores (%)")
+    fig_r = go.Figure(data=[go.Pie(labels=['Brasil', 'EUA', 'China', 'Outros'], values=[40, 20, 20, 20], hole=.4)])
+    fig_r.update_layout(template='plotly_dark')
+    st.plotly_chart(fig_r)
+
+elif menu == "Devocional":
+    st.title("🙏 Devocional de Poder")
+    st.markdown("""
+    <div class='card-quantum'>
+        <h2 style='text-align:center'>O SEGREDO DA PROSPERIDADE</h2>
+        <p class='devocional-texto'>
+            "Honre ao Senhor com todos os seus recursos... então os seus celeiros ficarão plenamente cheios." (Provérbios 3:9-10)
+        </p>
+        <p style='color:#ccc'>
+            Cristiano, o dinheiro é uma ferramenta. Quando Deus é o guia, o lucro é consequência. 
+            Peça sabedoria hoje e deixe que Ele ilumine seus investimentos.
+        </p>
+    </div>
+    """, unsafe_allow_html=True)
+
+elif menu == "Conselho Elite":
+    st.title("🤝 Conselho de Elite")
+    st.markdown("<div class='card-quantum'>🚀 Foco: Legado e Domínio de Mercado.</div>", unsafe_allow_html=True)
 elif menu == "🙏 Devocional de Poder":
     st.title("🙏 Conexão com o Alto")
     st.markdown("""
