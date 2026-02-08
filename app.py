@@ -750,7 +750,7 @@ elif menu == "🤝 Conselho de Elite":
 
 else:
     st.title(menu)
-    st.markdown(
+    st.markdown()
         """
         <div class='card-quantum'>
             Módulo em construção nesta versão. Se quiser, eu integro este painel com dados reais,
