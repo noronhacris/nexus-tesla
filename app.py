@@ -14,7 +14,7 @@ import requests
 # 1. CONFIGURAÇÃO DE ALTA PERFORMANCE E CABEÇALHO DO SISTEMA
 # =================================================================
 st.set_page_config(
-    page_title="Quantum Nexus Elite Pro - Terminal de Estado", 
+    page_title="APP NORONHA - Terminal de Estado" 
     layout="wide", 
     initial_sidebar_state="expanded"
 )
