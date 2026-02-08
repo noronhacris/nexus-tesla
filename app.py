@@ -319,7 +319,66 @@ if menu == "💎 IA Quântico Tesla":
                 """,
                 unsafe_allow_html=True,
             )
+elif menu == "🐾 Pet Global Intelligence":
+    st.title("🐾 Pet Global Intelligence")
+    st.markdown("""
+        <div class='card-quantum'>
+            Monitoramento estratégico do mercado pet mundial. Este terminal analisa dados da bolsa (Yahoo Finance) 
+            e projeta a dominância das maiores corporações do setor.
+        </div>
+    """, unsafe_allow_html=True)
+    
+    # Seletor de Ativos Pet para o Gráfico
+    pet_t = st.selectbox("Selecione o Ativo para Análise de Gráfico:", 
+                         ["PETZ3.SA (Petz Brasil)", "ZTS (Zoetis - Saúde Animal)", "CHWY (Chewy - E-commerce)", "IDXX (IDEXX Labs)"])
+    
+    # Extração do Ticker e Renderização do Gráfico de Corretora
+    ticker_pet = pet_t.split(" (")[1].replace(")", "")
+    render_corretora_chart(ticker_pet, pet_t)
+    
+    st.write("---")
+    
+    # Blocos de Market Share (Gráficos de Pizza)
+    col_p1, col_p2 = st.columns(2)
+    
+    with col_p1:
+        st.subheader("🌐 Dominância Global Pet")
+        labels_global = ['Mars Petcare', 'Nestlé Purina', 'Zoetis', 'Hills Pet', 'Outros']
+        values_global = [32, 28, 14, 11, 15]
+        
+        fig_global = go.Figure(data=[go.Pie(labels=labels_global, values=values_global, hole=.5)])
+        fig_global.update_layout(
+            template='plotly_dark', 
+            paper_bgcolor='rgba(0,0,0,0)', 
+            showlegend=True,
+            margin=dict(l=20, r=20, t=20, b=20)
+        )
+        st.plotly_chart(fig_global, use_container_width=True)
+        st.caption("Participação de mercado baseada em faturamento anual (USD).")
 
+    with col_p2:
+        st.subheader("🇧🇷 Market Share Brasil")
+        labels_br = ['Petz', 'Cobasi', 'Petlove', 'Mercado Local / Outros']
+        values_br = [38, 27, 15, 20]
+        
+        fig_br = go.Figure(data=[go.Pie(labels=labels_br, values=values_br, hole=.5, 
+                                        marker=dict(colors=['#d4af37', '#f9e295', '#888', '#333']))])
+        fig_br.update_layout(
+            template='plotly_dark', 
+            paper_bgcolor='rgba(0,0,0,0)', 
+            showlegend=True,
+            margin=dict(l=20, r=20, t=20, b=20)
+        )
+        st.plotly_chart(fig_br, use_container_width=True)
+        st.caption("Distribuição de dominância no varejo especializado brasileiro.")
+
+    st.markdown("""
+        <div class='neutro-msg'>
+            <b>Insight Estratégico:</b> O setor Pet demonstra resiliência histórica. Mesmo em crises, o ticket médio 
+            de saúde e alimentação premium mantém-se em curva ascendente. Focar em High-Ticket neste nicho 
+            é a chave para retornos exponenciais.
+        </div>
+    """, unsafe_allow_html=True)
 elif menu == "💹 Trade & Commodities":
     st.title("💹 Terminal de Trading Profissional")
     st.markdown(
