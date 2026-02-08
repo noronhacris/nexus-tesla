@@ -576,3 +576,4 @@ elif menu == "🤝 Conselho de Elite":
             </p>
         </div>
 
+
