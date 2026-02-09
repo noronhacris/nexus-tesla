@@ -843,7 +843,7 @@ elif st.session_state.pagina == 'conselho':
     st.markdown("</div>", unsafe_allow_html=True)
 
 st.markdown("</div>", unsafe_allow_html=True)
-            <h4 style='color: #d4af37;'>💰 Sobre Riqueza & Prosperidade</h4>
+           st.markdown("</div>", unsafe_allow_html=True)
             <p style='line-height: 1.8;'>
                 <b>"Lembra-te do Senhor teu Deus, porque é ele que te dá força para adquirires riqueza."</b><br>
                 <i>Deuteronômio 8:18</i><br><br>
